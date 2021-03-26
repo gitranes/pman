@@ -10,7 +10,7 @@ void tearDown(void)
 
 void test_example(void)
 {
-    TEST_ASSERT_EQUAL_INT(0, 1);
+    TEST_ASSERT_EQUAL_INT(1, 1);
 }
 
 int main(void)

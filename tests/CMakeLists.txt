@@ -6,6 +6,6 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(unity)
 
 add_executable(pman_tests tests.c)
-target_link_libraries(pman_tests PRIVATE unity)
+target_link_libraries(pman_tests unity)
 
 add_test(test_pman pman_tests)
