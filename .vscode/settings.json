@@ -6,6 +6,5 @@
         ".clang-format": "yaml"
     },
     "cmakeExplorer.buildDir": "build",
-    "yaml.format.enable": true,
-    "clang.executable": "clang-11"
+    "yaml.format.enable": true
 }
