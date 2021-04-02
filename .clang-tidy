@@ -1,4 +1,4 @@
-Checks:              '*,readability-identifier-naming'
+Checks:              '*,-llvmlibc-restrict-system-libc-headers,readability-identifier-naming'
 WarningsAsErrors:    '*,readability-identifier-naming'
 HeaderFilterRegex:   ''
 FormatStyle:         'none'

@@ -1,4 +1,4 @@
-set(CMAKE_C_CLANG_TIDY "clang-tidy")
+set(CMAKE_C_CLANG_TIDY "clang-tidy-11")
 set(CMAKE_C_INCLUDE_WHAT_YOU_USE "iwyu")
 set(CMAKE_LINK_WHAT_YOU_USE TRUE)
 
