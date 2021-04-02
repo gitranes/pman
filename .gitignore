@@ -66,3 +66,6 @@ _deps
 build/
 cmake-build-debug/
 DartConfiguration.tcl
+
+# Dia temp files
+**/*.dia~
