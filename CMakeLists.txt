@@ -28,7 +28,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # Set up clang-format
 set(CLANG_FORMAT_BIN_NAME clang-format)
-set(CLANG_FORMAT_EXCLUDE_PATTERNS  "build/" ${CMAKE_BINARY_DIR})
+set(CLANG_FORMAT_EXCLUDE_PATTERNS  "cmake-build-debug/" ${CMAKE_BINARY_DIR})
 find_package(ClangFormat)
 
 add_subdirectory(src)
