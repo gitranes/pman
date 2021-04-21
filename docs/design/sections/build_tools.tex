@@ -1,7 +1,97 @@
-\section{Build tools}
+\section{Project structure and build tools}
 
 \subsection{CMake build system}
+
+CMake was an rather obvious choice for a cross-platform build system, as the
+only real other candidate would have been Make. Modern CMake is well integrated
+with different C compiler options and tools.
+
+\subsubsection{Folder structure}
+
+The \texttt{pman} project is split to its architectural components using concise
+folder structure. Each subfolder/library will contain their own \textit{CMakeLists.txt}
+that specifies how the possible source files in the folder are built. The folders
+of the project with their purposes are listed in table \ref{tab:folder}.
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{|c|c|}
+        \hline
+        Folder & Purpose \\
+
+        \hline
+        \textit{cmake/} & CMake scripts and modules \\
+
+        \hline
+        \textit{include/} & Header files (\textit{.h}) \\
+
+        \hline
+        \textit{src/} & Source files (\textit{.c}) \\
+
+        \hline
+        \textit{tests/} & Unit test files \\
+
+        \hline
+    \end{tabular}
+    \caption{Folder structure of \texttt{pman}}
+    \label{tab:folder}
+\end{table}
+
 \subsubsection{Clang and C17}
-\subsubsection{Compiler options}
-\subsubsection{Clang power tools}
-\subsubsection{Integrated CMake tasks}
+
+The C compiler for the project was chosen to be Clang due to its superior tool
+capabilities and integration that is heavily utilized. Clang provides many
+highly capable static analysis and linting tools, which for a large C project
+are more than welcome.
+
+The newest complete C standard, C17, was chosen due to all of the useful
+features provided in C11. \texttt{pman} does not have portability constraints,
+so choosing the newest C standard poses no clear downsides.
+
+\subsubsection{CTest and unit testing}
+
+CTest is a unit test driver integrated with CMake, so it was a self-explanatory
+choice for the project. CTest implementation for the project can be seen in
+\textit{tests/} subfolder of the project.
+
+The \texttt{pman} project utilizes unit testing heavily, which is why a Unity
+library is used to extend the capabilities of the unit tests. Unity provides
+easy-to-use unit testing interface similar to Google Test etc. while also fully
+supporting C.
+
+\subsection{Static analysis and linting}
+
+As security is one of the key design principles of \texttt{pman}, the build
+system integrates several tools to facilitate this principle. Static analysis
+and linting are used during the building process to eliminate as many bugs and
+potential security risks as possible, as early as possible.
+
+\subsubsection{Compiler warnings}
+
+All C compilers have a way of generating warnings from a possibly buggy code,
+and Clang is no exception. To utilize warnings to their full effect, the
+\texttt{pman} build process enables every single feasible warning provided by
+the Clang compiler. Additionally, every warning produced by the compiler is
+transformed in to an error, which forces fixing each and every one of them.
+
+\subsubsection{Clang-Tidy linter}
+
+\texttt{clang-tidy} is a linting tool for C/\CC, which provides an extensible
+framework for diagnosing typical programming errors. These include style
+violations, interface misuse, and bugs.
+
+\texttt{clang-tidy} is integrated in to the build process of \texttt{pman},
+and all of its warnings are interpreted as errors. Additionally, the project
+also supports using CLion IDE, which further integrates with \texttt{clang-tidy}.
+
+\subsubsection{Clang Static Analyzer}
+
+Along with the \texttt{clang-tidy} mentioned in the previous section, Clang
+also provides a powerful static analyzer purpose-built for C/\CC code. For such
+a small project as \texttt{pman}, the only minor drawback is increase in
+compilation-time, which is well worth the benefits.
+
+The Clang Static Analyzer is integrates with \texttt{clang-tidy}, and therefore,
+is also ran during the normal build process. The project also implements a
+script for running the static analyzer separately in \textit{scripts/} folder.
+

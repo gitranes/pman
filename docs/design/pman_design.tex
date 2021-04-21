@@ -10,6 +10,10 @@
 \setlength{\parindent}{0em}
 \setlength{\parskip}{1em}
 
+% Macro for C++ (default has stupid spacing)
+\def\CC{C\raise.22ex\hbox{{\footnotesize +}}\raise.22ex\hbox{\footnotesize +}}
+\def\CC{{C\hspace{-.05em}\raisebox{.4ex}{\tiny\bf ++}}}
+
 \fancypagestyle{mypagestyle}
 {
     \fancyhf{}
@@ -25,7 +29,9 @@
 
 \import{sections}{titlepage.tex}
 
+\renewcommand{\baselinestretch}{0.75}\normalsize
 \tableofcontents
+\renewcommand{\baselinestretch}{1.0}\normalsize
 \newpage
 
 \import{sections}{introduction.tex}

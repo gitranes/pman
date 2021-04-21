@@ -18,8 +18,8 @@ set_property(GLOBAL PROPERTY CTEST_TARGETS_ADDED 1)
 include(FetchContent)
 include(CTest)
 
-# -std=c11 and warnings
-set(CMAKE_C_STANDARD 11)
+# -std=c17 and warnings
+set(CMAKE_C_STANDARD 17)
 set(CMAKE_C_EXTENSIONS OFF)
 add_compile_options(-Wall -Wextra -pedantic -Werror)
 
