@@ -71,6 +71,9 @@ DartConfiguration.tcl
 **/*.dia~
 
 ## Core latex/pdflatex auxiliary files:
+*.sta
+*.fdb_latexmk
+*.synctex.gz
 *.aux
 *.lof
 *.log
