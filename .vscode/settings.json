@@ -6,5 +6,8 @@
         ".clang-format": "yaml"
     },
     "cmakeExplorer.buildDir": "build",
-    "yaml.format.enable": true
+    "yaml.format.enable": true,
+    "cSpell.ignorePaths": [
+        "**/CMakeLists.txt"
+    ]
 }
