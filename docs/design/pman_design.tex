@@ -6,18 +6,28 @@
 \usepackage{fancyhdr}
 \usepackage{import}
 \usepackage{graphicx}
+\usepackage{xspace}
+\usepackage{float}
 
 \setlength{\parindent}{0em}
 \setlength{\parskip}{1em}
 
-% Macro for C++ (default has stupid spacing)
+% For consistent pman styling
+\newcommand{\pman}{\texttt{pman}\xspace}
+
+% Macro for C++ (default has stupid ++ spacing)
 \def\CC{C\raise.22ex\hbox{{\footnotesize +}}\raise.22ex\hbox{\footnotesize +}}
 \def\CC{{C\hspace{-.05em}\raisebox{.4ex}{\tiny\bf ++}}}
+
+% Macro for uml diagram paths
+\newcommand{\architectureuml}{../uml/architecture}
+\newcommand{\activitycommon}{../uml/architecture/activity_common}
+\newcommand{\activitycmds}{../uml/architecture/activity_commands}
 
 \fancypagestyle{mypagestyle}
 {
     \fancyhf{}
-    \fancyhead[L]{\footnotesize{\texttt{pman}}}
+    \fancyhead[L]{\footnotesize{\pman}}
     \fancyhead[R]{\footnotesize{Architecture and design}}
     \fancyfoot[R]{\thepage}
     \renewcommand{\headrulewidth}{0.1pt}

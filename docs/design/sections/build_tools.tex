@@ -8,7 +8,7 @@ with different C compiler options and tools.
 
 \subsubsection{Folder structure}
 
-The \texttt{pman} project is split to its architectural components using concise
+The \pman project is split to its architectural components using concise
 folder structure. Each subfolder/library will contain their own \textit{CMakeLists.txt}
 that specifies how the possible source files in the folder are built. The folders
 of the project with their purposes are listed in table \ref{tab:folder}.
@@ -33,7 +33,7 @@ of the project with their purposes are listed in table \ref{tab:folder}.
 
         \hline
     \end{tabular}
-    \caption{Folder structure of \texttt{pman}}
+    \caption{Folder structure of \pman}
     \label{tab:folder}
 \end{table}
 
@@ -45,7 +45,7 @@ highly capable static analysis and linting tools, which for a large C project
 are more than welcome.
 
 The newest complete C standard, C17, was chosen due to all of the useful
-features provided in C11. \texttt{pman} does not have portability constraints,
+features provided in C11. \pman does not have portability constraints,
 so choosing the newest C standard poses no clear downsides.
 
 \subsubsection{CTest and unit testing}
@@ -54,14 +54,14 @@ CTest is a unit test driver integrated with CMake, so it was a self-explanatory
 choice for the project. CTest implementation for the project can be seen in
 \textit{tests/} subfolder of the project.
 
-The \texttt{pman} project utilizes unit testing heavily, which is why a Unity
+The \pman project utilizes unit testing heavily, which is why a Unity
 library is used to extend the capabilities of the unit tests. Unity provides
 easy-to-use unit testing interface similar to Google Test etc. while also fully
 supporting C.
 
 \subsection{Static analysis and linting}
 
-As security is one of the key design principles of \texttt{pman}, the build
+As security is one of the key design principles of \pman, the build
 system integrates several tools to facilitate this principle. Static analysis
 and linting are used during the building process to eliminate as many bugs and
 potential security risks as possible, as early as possible.
@@ -70,7 +70,7 @@ potential security risks as possible, as early as possible.
 
 All C compilers have a way of generating warnings from a possibly buggy code,
 and Clang is no exception. To utilize warnings to their full effect, the
-\texttt{pman} build process enables every single feasible warning provided by
+\pman build process enables every single feasible warning provided by
 the Clang compiler. Additionally, every warning produced by the compiler is
 transformed in to an error, which forces fixing each and every one of them.
 
@@ -80,15 +80,19 @@ transformed in to an error, which forces fixing each and every one of them.
 framework for diagnosing typical programming errors. These include style
 violations, interface misuse, and bugs.
 
-\texttt{clang-tidy} is integrated in to the build process of \texttt{pman},
+\texttt{clang-tidy} is integrated in to the build process of \pman,
 and all of its warnings are interpreted as errors. Additionally, the project
 also supports using CLion IDE, which further integrates with \texttt{clang-tidy}.
+
+The utilized checks and project styling parameters are listed in the
+\textit{.clang-tidy} file at the root of the project. Along with enabling
+almost all possible checks, a consistent naming scheme is enforced.
 
 \subsubsection{Clang Static Analyzer}
 
 Along with the \texttt{clang-tidy} mentioned in the previous section, Clang
 also provides a powerful static analyzer purpose-built for C/\CC code. For such
-a small project as \texttt{pman}, the only minor drawback is increase in
+a small project as \pman, the only minor drawback is increase in
 compilation-time, which is well worth the benefits.
 
 The Clang Static Analyzer is integrates with \texttt{clang-tidy}, and therefore,

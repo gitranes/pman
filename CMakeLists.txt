@@ -19,7 +19,7 @@ include(FetchContent)
 include(CTest)
 
 # -std=c17 and warnings
-set(CMAKE_C_STANDARD 17)
+set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_EXTENSIONS OFF)
 add_compile_options(-Wall -Wextra -pedantic -Werror)
 

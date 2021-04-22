@@ -35,18 +35,24 @@ login timeout.
 Logs in to database that is then used with further commands. The login times
 out after a set period of time specified in the configuration.
 
-**`list `**`[db_path]`
-
-List the categories and entries in a database. By default uses the database
-that the user has logged on to, but optionally allows the user to select another
-database. The same command is aliased with `ls`.
-
 **`add `**`[--echo, -e][db_path][category] user`
 
 Adds a new entry to the current database. By default the password prompt does
 not echo, which can be modified with the `--echo` or `-e` option. The category
 and database path are optional. Aliases for the command are `insert` and
 `append`.
+
+**`get `**`[--clip, -c][db_path] user`
+
+Fetches a password matching a user in a database. By default utilizes the
+database that the user has logged in to. The same command is aliased with
+`fetch`.
+
+**`list `**`[db_path]`
+
+List the categories and entries in a database. By default uses the database
+that the user has logged on to, but optionally allows the user to select another
+database. The same command is aliased with `ls`.
 
 **`del `**`[--force, -f][db_path] user`
 
