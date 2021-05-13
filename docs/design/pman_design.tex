@@ -37,12 +37,17 @@
 
 \begin{document}
 
+% Disable page numbering for title page and introduction
+\pagenumbering{gobble}
+
 \import{sections}{titlepage.tex}
 
 \renewcommand{\baselinestretch}{0.75}\normalsize
 \tableofcontents
 \renewcommand{\baselinestretch}{1.0}\normalsize
 \newpage
+
+\pagenumbering{arabic}
 
 \import{sections}{introduction.tex}
 \import{sections}{build_tools.tex}

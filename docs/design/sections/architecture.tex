@@ -1,6 +1,6 @@
 \section{Architecture}
 
-\subsection{Activity view}
+\subsection{Process view}
 
 This section first introduces the activity diagrams of a few common tasks, and
 afterwards goes through the main commands of \pman. The activity
@@ -132,7 +132,7 @@ which is introduced in the figure \ref{dia:list_db}.
 The activity diagram for the \texttt{list} command is really simple, as the
 implementation details of the command are not a priority.
 
-\subsection{Logical view}
+\subsection{Implementation view}
 
 The main goal of logical view is to present the components of \pman and define
 the interface through which they communicate. The primary decisional forces
@@ -156,5 +156,23 @@ visible in figure \ref{dia:logical_view}.
 
 The deployment view seeks to define how \pman is deployed as whole, meaning
 what kind of libraries will be built and what will be linked to the executable.
-The chosen programming language C drives the design decisions quite heavily,
-as the entire model of deploying libraries and executables is innate to C.
+The deployment view also shows the environment the \pman is designed to be
+ran in.
+
+The chosen programming language C drives the architectural view quite heavily,
+as the entire model of deploying libraries and executables is innate to C. Many
+of the libraries linked with \pman are also C libraries. The deployment view
+can be seen in figure \ref{dia:deployment_view}.
+
+\begin{figure}[H]
+    \centering
+    \centerline{\includegraphics[scale=0.7]{\architectureuml/deployment_view}}
+    \caption{Logical view of the architecture of \pman}
+    \label{dia:deployment_view}
+\end{figure}
+
+As is apparent in figure \ref{dia:deployment_view}, the execution environment
+is almost solely consist of terminal utilities innate to Linux. Other than that,
+the \pman executable is linked with cryptographic utilities like \texttt{openssl}
+and configuration file libraries \texttt{inih}. The build process also produces
+its own libraries like \texttt{logging} and \texttt{encrypt}.
