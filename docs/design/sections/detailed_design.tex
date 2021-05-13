@@ -36,15 +36,31 @@ here the implementation will construct the \texttt{CryptMeta} object that is
 used with the raw encryption functions, which will contain the key, the
 initialization vector, and the requested algorithm.
 
-Going on, depending on the size of the requested file encryption/decryption
+Then, depending on the size of the requested file encryption/decryption
 the functions will either construct a reusable \texttt{CryptBlock} with an
 optimal size, or use the one-time encrypt/decrypt functions provided by the
-interface (continous and non-continous). Here the continous ones were designed
+interface (continous and non-continous). The continous ones were designed
 to accomodate extremely large databases, where constantly allocating and
 deallocating new blocks would not be feasible.
 
 \subsection{Database handling}
 \subsection{Hashing}
+
+Hashing inherits many of the same design aspects from encryption, as the
+operations are quite similar with, of course, hashing being quite simpler.
+The design of the hashing component can be seen in \ref{dia:hash_design}.
+
+\begin{figure}[H]
+    \centering
+    \centerline{\includegraphics[scale=0.55]{\detaileduml/hash/hash}}
+    \caption{Interfaces and design of the hashing component}
+    \label{dia:hash_design}
+\end{figure}
+
+Both one-time and continous hashing are supported as with encryption. The user
+will either construct a \texttt{Hasher} object to support continous hashing, or
+use the one-time hashing provided with function \texttt{hash\_bytes}.
+
 \subsection{Authentication}
 \subsection{Persistence}
 \subsection{Options}
