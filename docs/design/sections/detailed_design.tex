@@ -13,7 +13,7 @@ common data (\texttt{structs}).
 \subsection{Encryption}
 
 The design of encryption was broken into two parts in the architecture:
-File Encryption and Raw Encryption. These two components accomodate the needs
+File Encryption and Raw Encryption. These two components accommodate the needs
 of \pman when it comes to encryption and decryption. The detailed design of
 these two components can be seen in figure \ref{dia:encrypt_design}.
 
@@ -39,9 +39,9 @@ initialization vector, and the requested algorithm.
 Then, depending on the size of the requested file encryption/decryption
 the functions will either construct a reusable \texttt{CryptBlock} with an
 optimal size, or use the one-time encrypt/decrypt functions provided by the
-interface (continous and non-continous). The continous ones were designed
-to accomodate extremely large databases, where constantly allocating and
-deallocating new blocks would not be feasible.
+interface (continuous and non-continuous). The continuous ones were designed
+to accommodate extremely large databases, where constantly allocating and
+de-allocating new blocks would not be feasible.
 
 \subsection{Database handling}
 \subsection{Hashing}
@@ -57,12 +57,52 @@ The design of the hashing component can be seen in \ref{dia:hash_design}.
     \label{dia:hash_design}
 \end{figure}
 
-Both one-time and continous hashing are supported as with encryption. The user
-will either construct a \texttt{Hasher} object to support continous hashing, or
+Both one-time and continuous hashing are supported as with encryption. The user
+will either construct a \texttt{Hasher} object to support continuous hashing, or
 use the one-time hashing provided with function \texttt{hash\_bytes}.
 
 \subsection{Authentication}
 \subsection{Persistence}
 \subsection{Options}
+
+The option component was designed to provide a general interface for parsing
+options and command, and eventually execute them. The detailed design is visible
+in figure \ref{dia:options_design}.
+
+\begin{figure}[H]
+    \centering
+    \centerline{\includegraphics[scale=0.4]{\detaileduml/options/options}}
+    \caption{Interfaces and design of the options subsystem}
+    \label{dia:options_design}
+\end{figure}
+
+The basic idea in the design is to separate parsing, command implementation
+and the actual execution of the command. The interfaces here are quite simple
+and only provide few functions and error enumerations, which is a good thing.
+
 \subsection{User input}
+
+The user input subsystem provided components for prompts and input validation.
+\textbf{Due to time concerns the input validation was dropped, as it is not
+priority component.} The figure \ref{dia:prompts_design} shows the detailed
+design of the input subsystem.
+
+\begin{figure}[H]
+    \centering
+    \centerline{\includegraphics[scale=0.5]{\detaileduml/user_input/input}}
+    \caption{Interfaces and design of the input subsystem}
+    \label{dia:prompts_design}
+\end{figure}
+
+From the design of the prompts component, one can see that the interface offers
+both one-time prompts and verified prompts. The verification system works by
+a callback interface: the user provides a function that verifies the input and
+returns the \texttt{PromptVerifyResult} enumeration. This enumeration is then
+used to determine what is done.
+
+The verification system was designed to better facilitate an interface that
+can continuously retry the prompt, when the verification fails, or even fail
+completely. These kind of verified prompts will see common use among the other
+components.
+
 \subsection{Logging}
