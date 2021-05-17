@@ -106,3 +106,22 @@ completely. These kind of verified prompts will see common use among the other
 components.
 
 \subsection{Logging}
+
+Again, due to time concerns two of the components in logging subsystem were
+left unimplemented. Only the terminal logger was implemented, which is enough
+for our use. The figure \ref{dia:logging_design} shows the detailed design of
+the logging subsystem.
+
+\begin{figure}[H]
+    \centering
+    \centerline{\includegraphics[scale=0.55]{\detaileduml/logging/logging}}
+    \caption{Interfaces and design of the logging subsystem}
+    \label{dia:logging_design}
+\end{figure}
+
+If you are familiar with object oriented practices used in Linux kernel, you
+will recognize the OOP pattern used here. Each of the loggers implement a
+certain interface (\texttt{struct} of function pointers), which is linked with
+each logger object. This way we can pass any type of logger object around the
+program (terminal, file or debug logger), and the logging works with that same
+interface.
