@@ -10,6 +10,38 @@ paradigm, the detailed design will be depicted with class diagrams. In the
 actual implementation the class methods of will be free functions acting on
 common data (\texttt{structs}).
 
+\subsection{Database handling}
+
+Database handling is by far the most complex and largest subsystem after
+the encryption. This is because secure file based database handling has a lot
+of different intricacies not the mention the complex metadata that needs to
+be stored. The goal of the design of the database handling subsystem is to
+enclose all this in to flexible and easy-to-use interface.
+
+Due to the size of this subsystem, the detailed design is divided in to two
+diagrams. One for the database driver and metadata handling, and one for the
+entry managing. Lets first see the design of the database driver and metadata
+handling in figure \ref{dia:driver_meta}.
+
+\begin{figure}[H]
+    \centering
+    \centerline{\includegraphics[scale=0.4]{\detaileduml/db_handling/driver_meta}}
+    \caption{Detailed design of the database driver and metadata components.}
+    \label{dia:driver_meta}
+\end{figure}
+
+Bla bla bla
+
+Next, lets view the design of entry manager and line spoof components. This
+design is visible in \ref{dia:entry_manage}.
+
+\begin{figure}[H]
+    \centering
+    \centerline{\includegraphics[scale=0.55]{\detaileduml/db_handling/entry_manage}}
+    \caption{Detailed design of the entry manager component.}
+    \label{dia:entry_manage}
+\end{figure}
+
 \subsection{Encryption}
 
 The design of encryption was broken into two parts in the architecture:
@@ -43,7 +75,6 @@ interface (continuous and non-continuous). The continuous ones were designed
 to accommodate extremely large databases, where constantly allocating and
 de-allocating new blocks would not be feasible.
 
-\subsection{Database handling}
 \subsection{Hashing}
 
 Hashing inherits many of the same design aspects from encryption, as the
@@ -61,8 +92,53 @@ Both one-time and continuous hashing are supported as with encryption. The user
 will either construct a \texttt{Hasher} object to support continuous hashing, or
 use the one-time hashing provided with function \texttt{hash\_bytes}.
 
+\subsection{Line spoofing}
+
 \subsection{Authentication}
+
+Compared to a few other components, the purpose and design of authentication is
+fairly simply. This is due to it being only an interface that acts as link
+between database's and login cache's authentication models. The detailed design
+of authentication is visible in \ref{dia:auth_design}
+
+\begin{figure}[H]
+    \centering
+    \centerline{\includegraphics[scale=0.55]{\detaileduml/authentication/authenticate}}
+    \caption{Interfaces and design of the authentication component.}
+    \label{dia:auth_design}
+\end{figure}
+
+As can be seen, the authentication only provides an object which encloses the
+master key of the database and provides a unified interface for login cache and
+database authentications. The authenticate function should first search the
+login cache for any non-expired passwords. If that is not successful it
+will prompt the user for the password and validate the password through the
+database's methods.
+
 \subsection{Persistence}
+
+The persistance subsystem's job was to handle the login cache and the config
+file of \pman. For now, these tasks are quite simple, which is reflected in the
+design. The figure \ref{dia:persistence} shows the detailed design of this
+subsystem.
+
+\begin{figure}[H]
+    \centering
+    \centerline{\includegraphics[scale=0.5]{\detaileduml/persistence/persistence}}
+    \caption{Interfaces and design of the persistence subsystem.}
+    \label{dia:persistence}
+\end{figure}
+
+The login cache only handles the storing of the cached master key along with the
+time of the expiration. Thus, the \texttt{LoginCache} object only holds the
+(possibly) open cache file and information whether or not cache is enabled.
+
+The \texttt{ConfigHandler} on the other hand offers a one-time read interface,
+which fills the \texttt{ConfigView} object with the stored configurations. This
+way the configurations are stored in memory for as long the user wants without
+keeping the file open. In the future this interface is easy to supplement with
+write operations for dynamic configuration updating.
+
 \subsection{Options}
 
 The option component was designed to provide a general interface for parsing

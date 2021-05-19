@@ -74,7 +74,7 @@ and Clang is no exception. To utilize warnings to their full effect, the
 the Clang compiler. Additionally, every warning produced by the compiler is
 transformed in to an error, which forces fixing each and every one of them.
 
-\subsubsection{Clang-Tidy linter}
+\subsubsection{Clang-Tidy linter and static analyzer}
 
 \texttt{clang-tidy} is a linting tool for C/\CC, which provides an extensible
 framework for diagnosing typical programming errors. These include style
@@ -88,14 +88,12 @@ The utilized checks and project styling parameters are listed in the
 \textit{.clang-tidy} file at the root of the project. Along with enabling
 almost all possible checks, a consistent naming scheme is enforced.
 
-\subsubsection{Clang Static Analyzer}
-
 Along with the \texttt{clang-tidy} mentioned in the previous section, Clang
 also provides a powerful static analyzer purpose-built for C/\CC code. For such
 a small project as \pman, the only minor drawback is increase in
 compilation-time, which is well worth the benefits.
 
-The Clang Static Analyzer is integrates with \texttt{clang-tidy}, and therefore,
+The Clang Static Analyzer integrates with \texttt{clang-tidy}, and therefore,
 is also ran during the normal build process. The project also implements a
 script for running the static analyzer separately in \textit{scripts/} folder.
 
