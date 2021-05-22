@@ -30,17 +30,31 @@ handling in figure \ref{dia:driver_meta}.
     \label{dia:driver_meta}
 \end{figure}
 
-Bla bla bla
+From figure \ref{dia:driver_meta} you can see that \texttt{DbDriver} provides
+only a few key functions for opening and closing the database. The idea here is
+that the objects inside \texttt{DbDriver} are used with their respective
+interfaces if the user wants to do something more special. For example, search
+for entries or categories.
 
-Next, lets view the design of entry manager and line spoof components. This
-design is visible in \ref{dia:entry_manage}.
+The metadata handling also remains fairly simple. The \texttt{struct DbMetadata}
+just encloses all the data that is read from the file. Thus, the metadata can
+only be read once from the file. The entries of \texttt{DbMetadata} are used
+throughout the program (especially with decryption/encryption).
+
+Finally, lets view the design of entry manager component, which is visible in
+figure \ref{dia:entry_manage}. The design is fairly complex compared to the
+previously introduced components.
 
 \begin{figure}[H]
     \centering
-    \centerline{\includegraphics[scale=0.55]{\detaileduml/db_handling/entry_manage}}
+    \centerline{\includegraphics[scale=0.45]{\detaileduml/db_handling/entry_manage}}
     \caption{Detailed design of the entry manager component.}
     \label{dia:entry_manage}
 \end{figure}
+
+As one can see, the interface of the entry manager component offers capabilities
+for both finding, listing, modifying and deleting. These are the exact operations
+that need to supported in the command line interface.
 
 \subsection{Encryption}
 
@@ -93,6 +107,10 @@ will either construct a \texttt{Hasher} object to support continuous hashing, or
 use the one-time hashing provided with function \texttt{hash\_bytes}.
 
 \subsection{Line spoofing}
+
+As the password data will be encrypted line spoofing is not a priority
+requirement, which is why its design and implementation is skipped. Though, it
+is left as an architectural component, as it may prove to have future uses.
 
 \subsection{Authentication}
 
