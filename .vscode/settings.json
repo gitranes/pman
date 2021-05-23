@@ -1,6 +1,7 @@
 {
     "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
     "files.associations": {
+        "*.h": "c",
         "*.c": "c",
         ".clang-tidy": "yaml",
         ".clang-format": "yaml"
