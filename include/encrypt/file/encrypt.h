@@ -1,6 +1,6 @@
 #pragma once
 
-#include "encrypt/crypt_meta.h"
+#include "encrypt/meta/crypt.h"
 
 #include <stdio.h>
 

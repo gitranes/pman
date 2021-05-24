@@ -14,6 +14,7 @@ enum DbVersion
 
 struct DbMetadata
 {
+    struct StringView db_path;
     enum EncryptAlgo encrypt_algo;
     enum DbVersion version;
     struct StringView master_seed;

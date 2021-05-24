@@ -1,6 +1,6 @@
 #pragma once
 
-#include "encrypt/crypt_meta.h"
+#include "encrypt/meta/crypt.h"
 #include "encrypt/raw/crypt_block.h"
 
 int enc_encrypt_raw_continous(

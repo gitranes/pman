@@ -19,8 +19,9 @@ void db_drive_close_db(struct DbDriver* const driver)
 }
 
 int db_drive_verify_key(
-    struct DbDriver* const driver,
-    struct MasterKey* const key)
+    struct DbDriver* driver,
+    struct MasterKey* key,
+    struct StringView master_pass)
 {
     return 0;
 }

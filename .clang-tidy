@@ -1,8 +1,14 @@
-Checks:              '*,-llvmlibc-restrict-system-libc-headers,readability-identifier-naming'
+# No libc restrictions (I am not developing llvm)
+# Header guard check disabled (does not recognize pragma once)
+# Disable altera, as we are not developing FPGA...
+Checks:              '*, readability-identifier-naming,
+                      -llvmlibc-restrict-system-libc-headers,
+                      -llvm-header-guard,
+                      -altera*'
 WarningsAsErrors:    '*,readability-identifier-naming'
 HeaderFilterRegex:   ''
 FormatStyle:         'none'
-User:                rane
+User:                gitranes
 CheckOptions:
   - key:           readability-identifier-naming.StructCase
     value:         'CamelCase'

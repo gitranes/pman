@@ -9,8 +9,8 @@
 static int term_log_init(struct Logger* self, void* data);
 static void term_log_close(struct Logger* self);
 
-static void term_log_info(struct Logger* self, const char* fmt, ...);
-static void term_log_error(struct Logger* self, const char* fmt, ...);
+static void term_log_info(const struct Logger* self, const char* fmt, ...);
+static void term_log_error(const struct Logger* self, const char* fmt, ...);
 
 static const char* const INFO_PREFIX = "[INFO]: ";
 static const char* const ERROR_PREFIX = "[ERROR]: ";
@@ -36,7 +36,8 @@ static void term_log_close(struct Logger* const self)
     UNUSED(self);
 }
 
-static void term_log_info(struct Logger* const self, const char* fmt, ...)
+static void term_log_info(
+    const struct Logger* const self, const char* fmt, ...)
 {
     UNUSED(self);
 
@@ -49,7 +50,8 @@ static void term_log_info(struct Logger* const self, const char* fmt, ...)
     va_end(args);
 }
 
-static void term_log_error(struct Logger* const self, const char* fmt, ...)
+static void term_log_error(
+    const struct Logger* const self, const char* fmt, ...)
 {
     UNUSED(self);
 

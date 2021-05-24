@@ -17,6 +17,7 @@ target_sources(
         cmd/impl.c
 
         common/buffer_view.c
+        common/error_msg.cpp
 
         db/entries/category.c
         db/entries/entry_manage.c
@@ -26,14 +27,18 @@ target_sources(
 
         encrypt/file/decrypt.c
         encrypt/file/encrypt.c
+        encrypt/meta/crypt.c
+        encrypt/meta/iv.c
+        encrypt/meta/key.c
         encrypt/raw/crypt_block.c
-        encrypt/raw/crypt_meta.c
+        encrypt/raw/crypt.c
         encrypt/raw/decrypt.c
         encrypt/raw/encrypt.c
 
         hash/hash.c
         hash/hasher.c
 
+        input/prompt_msgs.cpp
         input/prompt_static.c
         input/prompt_yn.cpp
         input/prompt_verify.cpp

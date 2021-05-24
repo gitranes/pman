@@ -6,8 +6,8 @@ struct LoggerInterface
 {
     int (*init)(struct Logger* self, void* data);
     void (*close)(struct Logger* self);
-    void (*info)(struct Logger* self, const char* fmt, ...);
-    void (*error)(struct Logger* self, const char* fmt, ...);
+    void (*info)(const struct Logger* self, const char* fmt, ...);
+    void (*error)(const struct Logger* self, const char* fmt, ...);
 };
 
 struct Logger
