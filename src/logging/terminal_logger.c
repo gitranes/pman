@@ -31,7 +31,10 @@ static int term_log_init(struct Logger* const self, void* data)
     UNUSED(data);
     return 0;
 }
-static void term_log_close(struct Logger* const self) { }
+static void term_log_close(struct Logger* const self)
+{
+    UNUSED(self);
+}
 
 static void term_log_info(struct Logger* const self, const char* fmt, ...)
 {
