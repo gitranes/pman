@@ -1,2 +1,3 @@
 BasedOnStyle: WebKit
 Language: Cpp
+BreakBeforeBraces: Allman
