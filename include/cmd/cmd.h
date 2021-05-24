@@ -2,7 +2,8 @@
 
 enum Command
 {
-    CMD_UNRECOGNIZED = -1,
+    CMD_UNRECOGNIZED = -2,
+    CMD_EMPTY,
     CMD_NEW,
     CMD_LOGIN,
     CMD_ADD,
