@@ -19,6 +19,11 @@ struct DbDriver
 struct DbDriver* db_drive_init();
 void db_drive_clean(struct DbDriver* driver);
 
+int db_drive_new_db(
+    struct DbDriver* driver,
+    const char* db_path,
+    struct StringView master_pass);
+
 int db_drive_open_db(struct DbDriver* driver, const char* db_path);
 void db_drive_close_db(struct DbDriver* driver);
 

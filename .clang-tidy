@@ -1,10 +1,14 @@
-# No libc restrictions (I am not developing llvm)
-# Header guard check disabled (does not recognize pragma once)
-# Disable altera, as we are not developing FPGA...
+# Disabled checks:
+#   - No libc restrictions (I am not developing llvm)
+#   - Header guard check disabled (does not recognize pragma once)
+#   - Disable altera, as we are not developing FPGA...
+#   - For now, disabling warnings about not using Annex K (memcpy_s etc.). Might
+#     look into them later, but they have had their share of criticism.
 Checks:              '*, readability-identifier-naming,
                       -llvmlibc-restrict-system-libc-headers,
                       -llvm-header-guard,
-                      -altera*'
+                      -altera*,
+                      -clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling'
 WarningsAsErrors:    '*,readability-identifier-naming'
 HeaderFilterRegex:   ''
 FormatStyle:         'none'

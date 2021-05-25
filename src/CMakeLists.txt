@@ -4,6 +4,13 @@ set(CMAKE_LINK_WHAT_YOU_USE TRUE)
 
 add_executable(pman)
 
+# Address sanitization with debug builds
+target_link_options(
+        pman
+        PRIVATE
+        "$<$<CONFIG:DEBUG>:-fsanitize=address,undefined>"
+)
+
 target_include_directories(pman PRIVATE ../include)
 target_sources(
         pman
@@ -15,9 +22,13 @@ target_sources(
 
         cmd/drive.c
         cmd/impl.c
+        cmd/setup.c
 
+        common/constants.c
         common/buffer_view.c
-        common/error_msg.cpp
+        common/error_msg.c
+        common/paths.c
+        common/string.c
 
         db/entries/category.c
         db/entries/entry_manage.c
@@ -38,11 +49,11 @@ target_sources(
         hash/hash.c
         hash/hasher.c
 
-        input/prompt_msgs.cpp
+        input/prompt_msgs.c
         input/prompt_static.c
-        input/prompt_yn.cpp
-        input/prompt_verify.cpp
-        input/prompt_dynamic.cpp
+        input/prompt_yn.c
+        input/prompt_verify.c
+        input/prompt_dynamic.c
 
         logging/terminal_logger.c
 
@@ -51,11 +62,4 @@ target_sources(
 
         persistence/config.c
         persistence/login_cache.c
-)
-
-# Address sanitization with debug builds
-target_link_options(
-    pman
-    PRIVATE
-    "$<$<CONFIG:DEBUG>:-fsanitize=address,undefined>"
 )

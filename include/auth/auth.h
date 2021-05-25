@@ -18,7 +18,7 @@ struct DbDriver;
 
 /**
  * First searches the login cache, and if unsuccessful prompts the user for
- * the password. Passwords are always verified through Database driver.
+ * the password. Passwords are always verified through Database db.
  * @param empty_key - To be filled with the decrypt key, if successful
  * @param db_driver - Driver that is ready to verify keys
  * @param cache     - Points to a valid cache (can be NULL if no cache)

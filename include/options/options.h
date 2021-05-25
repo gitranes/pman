@@ -16,12 +16,15 @@ enum OptionTag
 struct OptionHolder
 {
     enum OptionTag tag;
-    struct StringArray args;
+    char** args;
 };
 
 struct Options
 {
     enum Command cmd;
     struct FixedArray options; // array of OptionHolders
-    struct StringArray args;
+    char** args;
 };
+
+struct OptionHolder* options_find(
+    const struct Options* options, enum OptionTag tag);

@@ -1,16 +1,16 @@
 #pragma once
 
 #include "cmd/cmd.h"
-#include "cmd/error.h"
+#include "cmd/status.h"
 
-struct Options;
+struct CmdRunEnvironment;
 
-enum CmdNewError cmd_run_new(const struct Options* options);
-enum CmdLoginError cmd_run_login(const struct Options* options);
-enum CmdAddError cmd_run_add(const struct Options* options);
-enum CmdGetError cmd_run_get(const struct Options* options);
-enum CmdListError cmd_run_list(const struct Options* options);
-enum CmdDelError cmd_run_del(const struct Options* options);
-enum CmdEditError cmd_run_edit(const struct Options* options);
+enum CmdStatus cmd_run_new(const struct CmdRunEnvironment* env);
+enum CmdStatus cmd_run_login(const struct CmdRunEnvironment* env);
+enum CmdStatus cmd_run_add(const struct CmdRunEnvironment* env);
+enum CmdStatus cmd_run_get(const struct CmdRunEnvironment* env);
+enum CmdStatus cmd_run_list(const struct CmdRunEnvironment* env);
+enum CmdStatus cmd_run_del(const struct CmdRunEnvironment* env);
+enum CmdStatus cmd_run_edit(const struct CmdRunEnvironment* env);
 
-const char* cmd_get_error_msg(enum Command cmd, int error);
+const char* cmd_get_error_msg(enum CmdStatus status);

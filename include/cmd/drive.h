@@ -1,12 +1,18 @@
 #pragma once
 
-struct Options;
+struct CmdRunEnvironment;
 
-enum DriverFault
+enum CmdDriverStatus
 {
-    DRV_OK = 0,
-    DRV_NO_COMMAND,
-    DRV_CMD_FAIL
+    CMD_DRV_OK = 0,
+    CMD_DRV_NO_CMD,
+    CMD_DRV_FAIL
 };
 
-enum DriverFault cmd_drive(const struct Options* options);
+/**
+ * Sets up the environment, recognizes, and runs the command (calls the matching
+ * impl function)
+ * @param options
+ * @return see CmdDriverStatus
+ */
+enum CmdDriverStatus cmd_drive(const struct CmdRunEnvironment* env);

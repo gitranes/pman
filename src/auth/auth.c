@@ -39,7 +39,7 @@ int auth_authenticate(
     }
     if (db_drive_verify_key(db_driver, empty_key, master_pass))
     {
-        TLOG_ERROR(AUTH_ERROR_MSG_FMT, db_path.buf);
+        TLOG_ERROR(ERROR_AUTH_FMT, db_path.buf);
         return -2;
     }
     return 0;
@@ -80,11 +80,10 @@ struct StringView get_master_pass(
 
 static struct StringView password_prompt(struct StringView db_path)
 {
-    const size_t prompt_size = strlen(PASSWORD_PROMPT_FMT) + db_path.size;
+    const size_t prompt_size = strlen(PROMPT_AUTH_MASTER_PW_FMT) + db_path.size;
     char* const prompt_msg = malloc(prompt_size);
 
-    // snprintf call is perfectly safe here
-    snprintf(prompt_msg, prompt_size, PASSWORD_PROMPT_FMT, db_path.buf); // NOLINT(clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling)
+    snprintf(prompt_msg, prompt_size, PROMPT_AUTH_MASTER_PW_FMT, db_path.buf);
 
     char* const master_password = prompt_static_password(prompt_msg);
     free(prompt_msg);
