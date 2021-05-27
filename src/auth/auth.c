@@ -19,9 +19,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-static struct StringView password_prompt(struct StringView db_path);
-static struct StringView get_master_pass(
-    struct StringView db_path, struct LoginCache* cache);
+static struct StringView auth_password_prompt(const char* db_path);
+static struct StringView auth_get_master_pass(
+    const char* db_path, struct LoginCache* cache);
 
 int auth_authenticate(
     struct MasterKey* const empty_key,
@@ -29,8 +29,8 @@ int auth_authenticate(
     struct LoginCache* const cache)
 {
     assert(db_driver->fp && db_driver->metadata);
-    const struct StringView db_path = db_driver->metadata->db_path;
-    const struct StringView master_pass = get_master_pass(db_path, cache);
+    const struct StringView master_pass =
+        auth_get_master_pass(db_driver->db_path, cache);
 
     if (!master_pass.buf)
     {
@@ -39,7 +39,7 @@ int auth_authenticate(
     }
     if (db_drive_verify_key(db_driver, empty_key, master_pass))
     {
-        TLOG_ERROR(ERROR_AUTH_FMT, db_path.buf);
+        TLOG_ERROR(ERROR_AUTH_FMT, db_driver->db_path);
         return -2;
     }
     return 0;
@@ -61,8 +61,8 @@ void auth_master_key_clean(struct MasterKey* const key)
     free(key);
 }
 
-struct StringView get_master_pass(
-    const struct StringView db_path, struct LoginCache* const cache)
+struct StringView auth_get_master_pass(
+    const char* db_path, struct LoginCache* cache)
 {
     struct StringView master_pass = {0};
 
@@ -73,17 +73,18 @@ struct StringView get_master_pass(
     // cache failed or no cache
     if (!master_pass.buf)
     {
-        master_pass = password_prompt(db_path);
+        master_pass = auth_password_prompt(db_path);
     }
     return master_pass;
 }
 
-static struct StringView password_prompt(struct StringView db_path)
+static struct StringView auth_password_prompt(const char* db_path)
 {
-    const size_t prompt_size = strlen(PROMPT_AUTH_MASTER_PW_FMT) + db_path.size;
+    const size_t prompt_size =
+        strlen(PROMPT_AUTH_MASTER_PW_FMT) + strlen(db_path);
     char* const prompt_msg = malloc(prompt_size);
 
-    snprintf(prompt_msg, prompt_size, PROMPT_AUTH_MASTER_PW_FMT, db_path.buf);
+    snprintf(prompt_msg, prompt_size, PROMPT_AUTH_MASTER_PW_FMT, db_path);
 
     char* const master_password = prompt_static_password(prompt_msg);
     free(prompt_msg);

@@ -12,15 +12,20 @@ struct DbEntries;
 
 struct DbDriver
 {
+    const char* db_path;
     FILE* fp;
     struct DbMetadata* metadata;
     struct DbEntries* entries;
+    struct ByteView raw_data;
 };
 
 struct DbDriver* db_drive_init();
 void db_drive_clean(struct DbDriver* driver);
 
-bool db_drive_db_is_open(struct DbDriver* driver);
+inline bool db_drive_db_is_open(struct DbDriver* driver)
+{
+    return driver->fp;
+}
 
 int db_drive_new_db(
     struct DbDriver* driver,
@@ -32,7 +37,7 @@ void db_drive_close_db(struct DbDriver* driver);
 
 int db_drive_verify_key(
     struct DbDriver* driver,
-    struct MasterKey* key,
+    struct MasterKey* empty_key,
     struct StringView master_pass);
 
 int db_drive_read_db_data(struct DbDriver* driver, struct MasterKey* key);

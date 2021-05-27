@@ -10,6 +10,7 @@
 #include "options/options.h"
 
 #include "persistence/config.h"
+#include "persistence/login_cache.h"
 
 #include <stdlib.h>
 
@@ -18,74 +19,64 @@
  * could not be opened.
  * @return Read config or NULL on failure
  */
-static struct ConfigView* read_config();
+static bool cmd_read_config();
 
 /**
  * Opens the database if there is a valid path in config, otherwise
  * does nothing.
  * @return Opened database
  */
-static int try_to_open_db(struct CmdRunEnvironment* env);
+static int cmd_try_to_open_db(struct CmdRunEnvironment* env);
 
 struct CmdRunEnvironment* cmd_run_env_init(const struct Options* options)
 {
-    struct CmdRunEnvironment* const env = calloc(1, sizeof(*env));
+    struct CmdRunEnvironment* const env = malloc(sizeof(*env));
     env->options = options;
+    env->db = db_drive_init();
+    env->config = config_view_init();
+    env->cache = login_cache_init();
     return env;
 }
 
 void cmd_run_env_clean(struct CmdRunEnvironment* env)
 {
     // options is not owned by the environment
-    if (env->config)
-    {
-        config_view_clean(env->config);
-    }
-    if (env->db)
-    {
-        db_drive_clean(env->db);
-    }
+    config_view_clean(env->config);
+    db_drive_clean(env->db);
+    login_cache_clean(env->cache);
     free(env);
 }
 
 int cmd_build_run_env(struct CmdRunEnvironment* env)
 {
-    env->config = read_config();
+    cmd_read_config(env->config);
     if (!env->config)
     {
         return -1;
     }
-    try_to_open_db(env);
+    cmd_try_to_open_db(env);
     // TODO: Login cache
 
     return 0;
 }
 
-static struct ConfigView* read_config()
+static bool cmd_read_config(struct ConfigView* const config)
 {
-    struct ConfigView* const config = config_view_init();
-
     if (config_open(config, PATH_CONFIG_FILE) && config_new(config, PATH_CONFIG_FILE))
     {
         TLOG_ERROR(ERROR_CONFIG_OPEN_FMT, PATH_CONFIG_FILE);
-        goto error;
+        return false;
     }
     if (config_read(config))
     {
         TLOG_ERROR(ERROR_CONFIG_READ_FMT, PATH_CONFIG_FILE);
-        goto error;
+        return false;
     }
-    return config;
-
-error:
-    config_view_clean(config);
-    return NULL;
+    return true;
 }
 
-static int try_to_open_db(struct CmdRunEnvironment* env)
+static int cmd_try_to_open_db(struct CmdRunEnvironment* env)
 {
-    env->db = db_drive_init();
-
     // db_path from an option is prioritized
     struct OptionHolder* const path_opt =
         options_find(env->options, OPT_DB_PATH);

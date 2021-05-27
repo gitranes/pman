@@ -2,5 +2,6 @@
 
 enum EncryptAlgo
 {
-    ENC_AES_256 = 0
+    ENC_ALGO_NONE = 0,
+    ENC_ALGO_AES_256 = 1
 };

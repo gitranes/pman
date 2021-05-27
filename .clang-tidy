@@ -4,12 +4,14 @@
 #   - Disable altera, as we are not developing FPGA...
 #   - libc has no support for annex K (scanf_s, memcpy_s etc.)
 #   - No need to specify users in TODOs (maybe bug numbers later?)
+#   - No need for android checks
 Checks:              '*, readability-identifier-naming,
                       -llvmlibc-restrict-system-libc-headers,
                       -llvm-header-guard,
                       -altera*,
                       -clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling,
-                      -google-readability-todo'
+                      -google-readability-todo,
+                      -android*'
 WarningsAsErrors:    '*,readability-identifier-naming'
 HeaderFilterRegex:   ''
 FormatStyle:         'none'
