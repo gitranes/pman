@@ -13,12 +13,11 @@ struct MasterKey;
 enum FieldSizes
 {
     DB_FLAGS_SIZE = 8,
-    DB_MASTER_SEED_SIZE = 16,
+    DB_MASTER_SALT_SIZE = 16,
     DB_ENCRYPT_IV_SIZE = 16,
     DB_CATEGORY_COUNT_SIZE = 8,
     DB_ENTRY_COUNT_SIZE = 8,
     DB_INTEGRITY_HASH_SIZE = 32,
-    DB_TRANSFORM_SEED_SIZE = 32,
     DB_ENCRYPT_ROUNDS_SIZE = 8
 };
 
@@ -40,13 +39,12 @@ struct DbMetadata
 {
     enum DbVersion version;
     enum EncryptAlgo encrypt_algo;
-    unsigned char master_seed[DB_MASTER_SEED_SIZE + 1];
+    unsigned char master_salt[DB_MASTER_SALT_SIZE + 1];
     unsigned char encrypt_iv[DB_ENCRYPT_IV_SIZE + 1];
     uint64_t category_count;
     uint64_t entry_count;
     unsigned char integrity_hash[DB_INTEGRITY_HASH_SIZE + 1];
-    unsigned char transform_seed[DB_TRANSFORM_SEED_SIZE + 1];
-    uint64_t key_encrypt_rounds;
+    uint64_t key_iteration_rounds;
 };
 
 struct DbMetadata* db_meta_init();
