@@ -13,7 +13,7 @@ const char* const PROMPT_NEW_DB_MASTER_PW =
 const char* const PROMPT_NEW_DB_VERIFY_MASTER_PW =
     "Enter the master password again: ";
 
-const char* const PROMPT_ADD_ENTRY_USERNAME =
+const char* const PROMPT_ADD_ENTRY_USERNAME_FMT =
     "Enter username for entry '%s': ";
 const char* const PROMPT_ADD_ENTRY_PASSWORD_FMT =
     "Enter password for entry '%s': ";

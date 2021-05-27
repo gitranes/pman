@@ -85,11 +85,6 @@ enum CmdStatus cmd_run_login(const struct CmdRunEnvironment* env)
 
 enum CmdStatus cmd_run_add(const struct CmdRunEnvironment* env)
 {
-    if (!db_drive_db_is_open(env->db))
-    {
-        return CMD_ADD_NO_DB;
-    }
-
     enum CmdStatus read_status = CMD_OK;
     if ((read_status = cmd_read_db(env)) != CMD_OK)
     {
@@ -107,13 +102,37 @@ enum CmdStatus cmd_run_add(const struct CmdRunEnvironment* env)
 
 enum CmdStatus cmd_run_get(const struct CmdRunEnvironment* env)
 {
-    UNUSED(env);
+    enum CmdStatus read_status = CMD_OK;
+    if ((read_status = cmd_read_db(env)) != CMD_OK)
+    {
+        return read_status;
+    }
+    const char* const entry_name = env->options->args[0];
+    struct Entry* const found_entry =
+        db_entries_find_entry(env->db->entries, NULL, entry_name);
+
+    if (!found_entry)
+    {
+        return CMD_GET_NOT_FOUND;
+    }
+    struct OptionHolder* clip_opt = options_find(env->options, OPT_CLIP);
+    if (clip_opt)
+    {
+        // TODO: Clipboard management
+    }
+
+    db_entry_print(found_entry);
     return CMD_OK;
 }
 
 enum CmdStatus cmd_run_list(const struct CmdRunEnvironment* env)
 {
-    UNUSED(env);
+    enum CmdStatus read_status = CMD_OK;
+    if ((read_status = cmd_read_db(env)) != CMD_OK)
+    {
+        return read_status;
+    }
+    db_entries_list(env->db->entries, &TERMINAL_LOGGER, LIST_SHOW_USER_PW);
     return CMD_OK;
 }
 
@@ -175,6 +194,10 @@ static struct StringView cmd_prompt_new_master_pw()
 
 static enum CmdStatus cmd_read_db(const struct CmdRunEnvironment* env)
 {
+    if (!db_drive_db_is_open(env->db))
+    {
+        return CMD_NO_DB;
+    }
     enum CmdStatus ret_status = CMD_OK;
 
     struct MasterKey* const master_key =

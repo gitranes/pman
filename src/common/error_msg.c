@@ -30,10 +30,12 @@ const char* error_get_msg_for_cmd(enum CmdStatus status)
         return "Database path was not valid.";
     case CMD_NEW_INIT_DB_FAILED:
         return "Database initialization failed.";
-    case CMD_ADD_NO_DB:
+    case CMD_NO_DB:
         return "No database to modify.";
     case CMD_ADD_DB_UPDATE_FAIL:
         return "Updating database entries failed.";
+    case CMD_GET_NOT_FOUND:
+        return "No matching entry found.";
     default:
         return "Unrecognized error.";
     }

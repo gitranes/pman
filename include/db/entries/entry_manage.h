@@ -26,6 +26,13 @@ int db_entries_write_to_file(struct DbEntries* entries, FILE* fp);
 struct Category* db_entries_find_category(
     struct DbEntries* entries, const char* category_name);
 
+/**
+ * Searches the categories in the database for an entry
+ * @param entries
+ * @param category_name - Optional category_name (every category searched if NULL)
+ * @param entry_name    - The name for the entry
+ * @return ptr to Entry object
+ */
 struct Entry* db_entries_find_entry(
     struct DbEntries* entries,
     const char* category_name,
@@ -40,5 +47,5 @@ enum ListSetting
 
 void db_entries_list(
     struct DbEntries* entries,
-    struct Logger* logger,
+    const struct Logger* logger,
     enum ListSetting);
