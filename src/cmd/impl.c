@@ -258,7 +258,7 @@ static void cmd_add_entry_to_db(
         db_entries_find_category(driver->entries, category_name);
     struct Entry* const new_entry = db_category_new_empty_entry(category);
 
-    new_entry->name = entry_name;
-    new_entry->user = cmd_add_prompt_user(new_entry->name);
-    new_entry->password = cmd_add_prompt_pw(new_entry->name, echo_pw);
+    db_entry_set_name(new_entry, entry_name);
+    db_entry_set_user(new_entry, cmd_add_prompt_user(new_entry->name));
+    db_entry_set_password(new_entry, cmd_add_prompt_pw(new_entry->name, echo_pw));
 }

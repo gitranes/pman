@@ -4,9 +4,9 @@ struct Logger;
 
 struct Entry
 {
-    const char* name;
-    const char* user;
-    const char* password;
+    char* name;
+    char* user;
+    char* password;
 };
 
 void db_entry_init_in_place(void* buffer);

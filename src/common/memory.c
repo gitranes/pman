@@ -16,7 +16,7 @@ int mem_grow_buffer(void** buffer, size_t size, size_t new_size)
         return -1;
     }
 
-    memcpy(new_buffer, buffer, size);
+    memcpy(new_buffer, *buffer, size);
     *buffer = new_buffer;
     return 0;
 }

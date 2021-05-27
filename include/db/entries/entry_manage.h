@@ -27,6 +27,12 @@ int db_entries_read_db(struct DbEntries* entries, FILE* category_start);
 struct StringView db_entries_write_to_buffer(struct DbEntries* entries);
 int db_entries_write_to_file(struct DbEntries* entries, FILE* fp);
 
+/**
+ * Searches for a category in a database based on a name
+ * @param entries
+ * @param category_name - if NULL the default category name is used
+ * @return
+ */
 struct Category* db_entries_find_category(
     struct DbEntries* entries, const char* category_name);
 
