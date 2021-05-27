@@ -165,31 +165,13 @@ static bool cmd_db_path_verify(const char* path)
 
 static struct StringView cmd_prompt_new_master_pw()
 {
-    static char verify_buffer[CST_MAX_MASTER_PW_LEN + 1] = "";
-    struct StringView input = {
-        .buf = verify_buffer,
-        .size = 0
+    char* const master_pw = prompt_static_password_twice(
+        PROMPT_NEW_DB_MASTER_PW, PROMPT_NEW_DB_VERIFY_MASTER_PW);
+
+    return (struct StringView){
+        .buf = master_pw,
+        .size = strlen(master_pw)
     };
-
-    // Prompt master password twice and compare
-    bool verify_ok = false;
-    while (!verify_ok)
-    {
-        const char* input_pw = prompt_static_password(PROMPT_NEW_DB_MASTER_PW);
-        input.size = strlen(input_pw);
-        memcpy(input.buf, input_pw, input.size);
-
-        input_pw = prompt_static_password(PROMPT_NEW_DB_VERIFY_MASTER_PW);
-        if (strcmp(input.buf, input_pw) == 0)
-        {
-            verify_ok = true;
-        }
-        else
-        {
-            TLOG_ERROR("%s", ERROR_MASTER_PW_VERIFY);
-        }
-    }
-    return input;
 }
 
 static enum CmdStatus cmd_read_db(const struct CmdRunEnvironment* env)

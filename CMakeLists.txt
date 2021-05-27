@@ -1,5 +1,13 @@
 cmake_minimum_required(VERSION 3.16)
 
+if (WIN32)
+    message(FATAL_ERROR "Windows in not yet supported.")
+endif()
+if (UNIX)
+    # The project uses a few POSIX extensions, namely fileno
+    add_compile_definitions(_POSIX_C_SOURCE)
+endif()
+
 project(
     pman
     VERSION 0.1.0

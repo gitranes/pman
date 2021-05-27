@@ -1,1 +1,81 @@
 #include "input/prompt_static.h"
+#include "input/term.h"
+
+#include "common/error_msg.h"
+
+#include "logging/terminal_logger.h"
+
+#include <stdbool.h>
+#include <stdio.h>
+#include <string.h>
+
+static char g_pw_buffer[PROMPT_MAX_STATIC_TEXT_LEN];
+static char g_text_buffer[PROMPT_MAX_STATIC_PW_LEN];
+
+static const size_t SCANF_MAX_DIGITS = 12;
+
+static void scan_string(char* buffer, unsigned size);
+
+char* prompt_static_text(const char* prompt_msg)
+{
+    fputs(prompt_msg, stdout);
+    scan_string(g_text_buffer, sizeof(g_text_buffer) - 1);
+    return g_text_buffer;
+}
+
+char* prompt_static_password(const char* prompt_msg)
+{
+    struct TerminalHandle* const term = term_handle_init();
+    if (!term || term_echo_off(term) != 0)
+    {
+        return NULL;
+    }
+
+    // puts does newline..
+    fputs(prompt_msg, stdout);
+    scan_string(g_pw_buffer, sizeof(g_pw_buffer) - 1);
+
+    term_handle_clean(term);
+    return g_pw_buffer;
+}
+
+char* prompt_static_password_twice(
+    const char* prompt_msg, const char* verify_prompt)
+{
+    static char verify_buffer[PROMPT_MAX_STATIC_PW_LEN] = "";
+
+    struct TerminalHandle* const term = term_handle_init();
+    if (!term || term_echo_off(term) != 0)
+    {
+        return NULL;
+    }
+
+    // Prompt password twice and compare
+    bool verify_ok = false;
+    while (!verify_ok)
+    {
+        fputs(prompt_msg, stdout);
+        scan_string(g_pw_buffer, sizeof(g_pw_buffer) - 1);
+
+        fputs(verify_prompt, stdout);
+        scan_string(verify_buffer, sizeof(verify_buffer) - 1);
+        if (strcmp(g_pw_buffer, verify_buffer) == 0)
+        {
+            verify_ok = true;
+        }
+        else
+        {
+            TLOG_ERROR("%s", ERROR_PASSWORD_VERIFY);
+        }
+    }
+
+    term_handle_clean(term);
+    return g_pw_buffer;
+}
+
+void scan_string(char* buffer, unsigned size)
+{
+    char format[SCANF_MAX_DIGITS];
+    snprintf(format, sizeof(format), "%%%ds", size - 1);
+    scanf(format, buffer);
+}

@@ -1,6 +1,6 @@
 #pragma once
 
-struct Options;
+#include "options/options.h"
 
 enum ParseStatus
 {

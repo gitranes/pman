@@ -2,8 +2,7 @@
 #   - No libc restrictions (I am not developing llvm)
 #   - Header guard check disabled (does not recognize pragma once)
 #   - Disable altera, as we are not developing FPGA...
-#   - For now, disabling warnings about not using Annex K (memcpy_s etc.). Might
-#     look into them later, but they have had their share of criticism.
+#   - libc has no support for annex K (scanf_s, memcpy_s etc.)
 #   - No need to specify users in TODOs (maybe bug numbers later?)
 Checks:              '*, readability-identifier-naming,
                       -llvmlibc-restrict-system-libc-headers,
@@ -29,8 +28,11 @@ CheckOptions:
     value:         'UPPER_CASE'
   - key:           readability-identifier-naming.EnumConstantCase
     value:         'UPPER_CASE'
-  - key:           readability-identifier-naming.MacroDefinitionCase
-    value:         'UPPER_CASE'
+# The check is bugged, as it seems to not ignore the command line macros like
+# it should. For example, the -D_POSIX_C_SOURCE command line definition causes
+# a warning in every single compilation unit. Great...
+#  - key:           readability-identifier-naming.MacroDefinitionCase
+#    value:         'UPPER_CASE'
 
   - key:           readability-identifier-naming.GlobalVariableCase
     value:         'lower_case'

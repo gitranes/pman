@@ -54,6 +54,7 @@ target_sources(
         input/prompt_yn.c
         input/prompt_verify.c
         input/prompt_dynamic.c
+        input/term.c
 
         logging/terminal_logger.c
 
