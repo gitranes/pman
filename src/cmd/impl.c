@@ -10,6 +10,7 @@
 
 #include "db/driver.h"
 #include "db/entries/entry_manage.h"
+#include "db/metadata.h"
 
 #include "logging/terminal_logger.h"
 
@@ -183,7 +184,7 @@ static enum CmdStatus cmd_read_db(const struct CmdRunEnvironment* env)
     enum CmdStatus ret_status = CMD_OK;
 
     struct MasterKey* const master_key =
-        auth_master_key_init(CST_MAX_MASTER_KEY_LEN);
+        auth_master_key_init(DB_MASTER_KEY_SIZE);
 
     if (auth_authenticate(master_key, env->db, env->cache))
     {

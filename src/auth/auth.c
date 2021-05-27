@@ -42,6 +42,8 @@ int auth_authenticate(
         TLOG_ERROR(ERROR_AUTH_FMT, db_driver->db_path);
         return -2;
     }
+
+    empty_key->verified = true;
     return 0;
 }
 

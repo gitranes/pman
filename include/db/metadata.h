@@ -3,12 +3,18 @@
 #include "common/buffer_view.h"
 
 #include "encrypt/algorithm.h"
+#include "encrypt/meta/crypt.h"
 
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
 
 struct MasterKey;
+
+enum KeySizes
+{
+    DB_MASTER_KEY_SIZE = 64
+};
 
 enum FieldSizes
 {
@@ -18,8 +24,10 @@ enum FieldSizes
     DB_CATEGORY_COUNT_SIZE = 8,
     DB_ENTRY_COUNT_SIZE = 8,
     DB_INTEGRITY_HASH_SIZE = 32,
-    DB_ENCRYPT_ROUNDS_SIZE = 8
+    DB_ITERATION_ROUNDS_SIZE = 4
 };
+
+extern const long DB_METADATA_HEADER_SIZE;
 
 enum DbVersion
 {
@@ -44,7 +52,7 @@ struct DbMetadata
     uint64_t category_count;
     uint64_t entry_count;
     unsigned char integrity_hash[DB_INTEGRITY_HASH_SIZE + 1];
-    uint64_t key_iteration_rounds;
+    int32_t key_iteration_rounds;
 };
 
 struct DbMetadata* db_meta_init();
@@ -77,3 +85,11 @@ int db_meta_calculate_key(
     struct DbMetadata* meta,
     struct MasterKey* empty_key,
     struct StringView master_pass);
+
+/**
+ * Create CryptMeta object from the metadata stored in the metadata obj.
+ * @param master_key
+ * @return CryptMeta object (use enc_crypt_meta_clean when done)
+ */
+struct CryptMeta* db_meta_to_crypt_meta(
+    const struct DbMetadata* meta, const struct MasterKey* master_key);

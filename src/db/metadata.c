@@ -1,7 +1,11 @@
 #include "db/metadata.h"
 
+#include "auth/auth.h"
+
+#include <openssl/evp.h>
 #include <openssl/rand.h>
 
+#include <assert.h>
 #include <inttypes.h>
 #include <stdlib.h>
 
@@ -14,9 +18,11 @@ enum FieldEndOffsets
     DB_CATEGORY_COUNT_END = DB_ENCRYPT_IV_END + DB_CATEGORY_COUNT_SIZE,
     DB_ENTRY_COUNT_END = DB_CATEGORY_COUNT_END + DB_ENTRY_COUNT_SIZE,
     DB_CONTENT_HASH_END = DB_ENTRY_COUNT_END + DB_INTEGRITY_HASH_SIZE,
-    DB_ENCRYPT_ROUND_END = DB_CONTENT_HASH_END + DB_ENCRYPT_ROUNDS_SIZE,
+    DB_ENCRYPT_ROUND_END = DB_CONTENT_HASH_END + DB_ITERATION_ROUNDS_SIZE,
     DB_METADATA_SIZE = DB_ENCRYPT_ROUND_END
 };
+
+const long DB_METADATA_HEADER_SIZE = DB_METADATA_SIZE;
 
 enum FieldCount
 {
@@ -26,7 +32,7 @@ enum FieldCount
 // See enum FieldSizes and DbMetadata for explanation.
 // SCNx64 = uint64_t from hexadecimal
 static const char* const META_SCANF_STRING =
-    "%" SCNx64 "%16s%16s%" SCNx64 "%" SCNx64 "%32s%" SCNx64;
+    "%" SCNx64 "%16s%16s%" SCNx64 "%" SCNx64 "%32s%" SCNx32;
 
 struct DbMetadata* db_meta_init()
 {
@@ -92,5 +98,32 @@ int db_meta_calculate_key(
     struct MasterKey* empty_key,
     struct StringView master_pass)
 {
+    assert(empty_key->view.size == DB_MASTER_KEY_SIZE);
 
+    if (PKCS5_PBKDF2_HMAC_SHA1(
+            master_pass.buf,
+            (int)master_pass.size,
+            meta->master_salt,
+            DB_MASTER_SALT_SIZE,
+            meta->key_iteration_rounds,
+            (int)empty_key->view.size,
+            empty_key->view.buf)
+        != 1)
+    {
+        return -1;
+    }
+    return 0;
+}
+struct CryptMeta* db_meta_to_crypt_meta(
+    const struct DbMetadata* meta, const struct MasterKey* master_key)
+{
+    // TODO: ugly cast
+    return enc_crypt_meta_init(
+        meta->encrypt_algo,
+        master_key->view,
+        (struct ByteView){
+            .buf = (unsigned char*)meta->encrypt_iv,
+            .size = DB_ENCRYPT_IV_SIZE
+        }
+    );
 }

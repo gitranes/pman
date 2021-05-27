@@ -7,6 +7,7 @@
 #include <stdalign.h>
 #include <stdbool.h>
 
+// TODO: Move to metadata?
 struct MasterKey
 {
     struct ByteView view;

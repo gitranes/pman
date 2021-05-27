@@ -17,4 +17,5 @@ struct CryptMeta* enc_crypt_meta_init(
     enum EncryptAlgo algorithm,
     struct ByteView key,
     struct ByteView iv);
+
 void enc_crypt_meta_clean(struct CryptMeta* meta);

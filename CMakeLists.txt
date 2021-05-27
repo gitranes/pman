@@ -4,8 +4,10 @@ if (WIN32)
     message(FATAL_ERROR "Windows in not yet supported.")
 endif()
 if (UNIX)
-    # The project uses a few POSIX extensions, namely fileno
-    add_compile_definitions(_POSIX_C_SOURCE)
+    # The project uses a few POSIX and GNU extensions:
+    #   from POSIX: fileno
+    #   from GNU: O_TMPFILE
+    add_compile_definitions(_POSIX_C_SOURCE _GNU_SOURCE)
 endif()
 
 project(

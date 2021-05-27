@@ -2,7 +2,10 @@ set(CMAKE_C_CLANG_TIDY "clang-tidy")
 set(CMAKE_C_INCLUDE_WHAT_YOU_USE "iwyu")
 set(CMAKE_LINK_WHAT_YOU_USE TRUE)
 
-add_executable(pman)
+add_executable(pman common/file.c)
+
+find_package(OpenSSL REQUIRED)
+target_link_libraries(pman OpenSSL::Crypto)
 
 # Address sanitization with debug builds
 target_link_options(
