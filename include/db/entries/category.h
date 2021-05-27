@@ -2,12 +2,18 @@
 
 #include "db/entries/entry.h"
 
-#include "common/fixed_array.h"
+#include <stddef.h>
+
+struct EntryArray
+{
+    struct Entry* buf;
+    size_t size;
+};
 
 struct Category
 {
     char* name;
-    struct FixedArray entries; // array of Entry(s)
+    struct EntryArray entries;
 };
 
 struct Category* db_category_init_in_place(void* buffer);

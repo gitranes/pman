@@ -9,6 +9,7 @@
 static int term_log_init(struct Logger* self, void* data);
 static void term_log_close(struct Logger* self);
 
+static void term_log_plain(const struct Logger* self, const char* fmt, ...);
 static void term_log_info(const struct Logger* self, const char* fmt, ...);
 static void term_log_error(const struct Logger* self, const char* fmt, ...);
 
@@ -19,6 +20,7 @@ const struct Logger TERMINAL_LOGGER = {
     .interface = (struct LoggerInterface) {
         .init = term_log_init,
         .close = term_log_close,
+        .plain = term_log_plain,
         .info = term_log_info,
         .error = term_log_error,
     },
@@ -34,6 +36,17 @@ static int term_log_init(struct Logger* const self, void* data)
 static void term_log_close(struct Logger* const self)
 {
     UNUSED(self);
+}
+
+void term_log_plain(const struct Logger* self, const char* fmt, ...)
+{
+    UNUSED(self);
+    va_list args;
+    va_start(args, fmt);
+
+    vprintf(fmt, args);
+
+    va_end(args);
 }
 
 static void term_log_info(

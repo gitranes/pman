@@ -2,7 +2,7 @@ set(CMAKE_C_CLANG_TIDY "clang-tidy")
 set(CMAKE_C_INCLUDE_WHAT_YOU_USE "iwyu")
 set(CMAKE_LINK_WHAT_YOU_USE TRUE)
 
-add_executable(pman common/file.c)
+add_executable(pman)
 
 find_package(OpenSSL REQUIRED)
 target_link_libraries(pman OpenSSL::Crypto)
@@ -27,9 +27,11 @@ target_sources(
         cmd/impl.c
         cmd/setup.c
 
-        common/constants.c
         common/buffer_view.c
+        common/constants.c
         common/error_msg.c
+        common/file.c
+        common/memory.c
         common/paths.c
         common/string.c
 

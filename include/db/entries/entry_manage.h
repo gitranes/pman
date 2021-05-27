@@ -5,17 +5,21 @@
 
 #include "logging/logger.h"
 
-#include "common/buffer_view.h"
-#include "common/fixed_array.h"
-
+#include <stddef.h>
 #include <stdio.h>
+
+struct CategoryArray
+{
+    struct Category* buf;
+    size_t size;
+};
 
 struct DbEntries
 {
-    struct FixedArray categories; // array of Category(s)
+    struct CategoryArray categories;
 };
 
-struct DbEntries* db_entries_init();
+struct DbEntries* db_entries_init(size_t category_count);
 void db_entries_clean();
 
 int db_entries_read_db(struct DbEntries* entries, FILE* category_start);
@@ -48,4 +52,4 @@ enum ListSetting
 void db_entries_list(
     struct DbEntries* entries,
     const struct Logger* logger,
-    enum ListSetting);
+    enum ListSetting setting);

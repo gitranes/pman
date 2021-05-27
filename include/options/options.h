@@ -2,7 +2,7 @@
 
 #include "cmd/cmd.h"
 
-#include "common/fixed_array.h"
+#include <stddef.h>
 
 enum OptionTag
 {
@@ -19,10 +19,16 @@ struct OptionHolder
     char** args;
 };
 
+struct OptionHolderArray
+{
+    struct OptionHolder* buf;
+    size_t size;
+};
+
 struct Options
 {
     enum Command cmd;
-    struct FixedArray options; // array of OptionHolders
+    struct OptionHolderArray holders;
     char** args;
 };
 

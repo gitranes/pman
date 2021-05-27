@@ -22,7 +22,7 @@ struct DbDriver
 struct DbDriver* db_drive_init();
 void db_drive_clean(struct DbDriver* driver);
 
-inline bool db_drive_db_is_open(struct DbDriver* driver)
+static inline bool db_drive_db_is_open(struct DbDriver* driver)
 {
     return driver->fp;
 }

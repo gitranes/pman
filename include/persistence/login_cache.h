@@ -7,7 +7,7 @@
 
 struct LoginCache
 {
-    FILE* cache_file;
+    FILE* file;
     bool cache_enabled;
 };
 

@@ -5,7 +5,6 @@
 #include "auth/auth.h"
 
 #include "common/file.h"
-#include "common/macros.h"
 
 #include "encrypt/file/decrypt.h"
 
@@ -33,7 +32,7 @@ struct DbDriver* db_drive_init()
     struct DbDriver* const driver = malloc(sizeof(*driver));
     driver->fp = NULL;
     driver->metadata = db_meta_init();
-    driver->entries = db_entries_init();
+    driver->entries = db_entries_init(1);
     driver->raw_data = (struct ByteView){
         .buf = malloc(DB_DEFAULT_RAW_SIZE),
         .size = DB_DEFAULT_RAW_SIZE

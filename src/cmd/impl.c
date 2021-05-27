@@ -122,7 +122,8 @@ enum CmdStatus cmd_run_get(const struct CmdRunEnvironment* env)
         // TODO: Clipboard management
     }
 
-    db_entry_print(found_entry);
+    // TODO: Other loggers
+    db_entry_print(found_entry, &TERMINAL_LOGGER);
     return CMD_OK;
 }
 

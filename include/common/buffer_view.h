@@ -5,12 +5,6 @@
 #include <stdalign.h>
 #include <stddef.h>
 
-struct BufferView
-{
-    void* buf;
-    size_t size;
-};
-
 struct StringView
 {
     char* buf;
