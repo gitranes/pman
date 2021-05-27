@@ -4,8 +4,6 @@
 
 #include "common/buffer_view.h"
 
-#include <stddef.h>
-
 struct CryptMeta
 {
     struct ByteView init_vector;

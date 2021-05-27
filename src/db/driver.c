@@ -114,6 +114,7 @@ static int db_decrypt_data(
 
     FILE* tmp_fp = NULL;
     // TODO: Something other than temp file?
+    // Here a temp file is just as an "endless" buffer
     if (!(tmp_fp = file_hidden_temp(".", "w")))
     {
         ret_code = -2;

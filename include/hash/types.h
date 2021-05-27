@@ -4,7 +4,8 @@
 
 enum HashAlgo
 {
-    HASH_SHA256
+    HASH_SHA256,
+    HASH_SHA512
 };
 
 typedef struct ByteView HashView;
