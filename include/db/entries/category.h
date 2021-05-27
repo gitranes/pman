@@ -16,5 +16,7 @@ void db_category_destroy_in_place(struct Category* category);
 struct Entry* db_category_find_entry(
     struct Category* category, const char* entry_name);
 
+struct Entry* db_category_new_empty_entry(struct Category* category);
+
 void db_category_delete_entry(
     struct Category* category, struct Entry* entry);

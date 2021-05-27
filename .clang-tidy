@@ -4,11 +4,13 @@
 #   - Disable altera, as we are not developing FPGA...
 #   - For now, disabling warnings about not using Annex K (memcpy_s etc.). Might
 #     look into them later, but they have had their share of criticism.
+#   - No need to specify users in TODOs (maybe bug numbers later?)
 Checks:              '*, readability-identifier-naming,
                       -llvmlibc-restrict-system-libc-headers,
                       -llvm-header-guard,
                       -altera*,
-                      -clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling'
+                      -clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling,
+                      -google-readability-todo'
 WarningsAsErrors:    '*,readability-identifier-naming'
 HeaderFilterRegex:   ''
 FormatStyle:         'none'

@@ -28,7 +28,7 @@ enum CmdDriverStatus cmd_drive(const struct CmdRunEnvironment* env)
         return CMD_DRV_OK;
     }
 
-    TLOG_ERROR("%s", cmd_get_error_msg(status));
+    TLOG_ERROR("%s", error_get_msg_for_cmd(status));
     if (status == CMD_INVALID)
     {
         return CMD_DRV_NO_CMD;

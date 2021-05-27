@@ -15,3 +15,26 @@ const char* const ERROR_MASTER_PW_VERIFY =
 
 const char* const ERROR_INVALID_PATH =
     "The specified path is not valid '%s'";
+
+const char* error_get_msg_for_cmd(enum CmdStatus status)
+{
+    switch (status)
+    {
+    case CMD_INVALID:
+        return "Unrecognized command.";
+    case CMD_BAD_AUTH:
+        return "Authentication failed.";
+    case CMD_BAD_DB_READ:
+        return "Database could not be read";
+    case CMD_NEW_BAD_DB_PATH:
+        return "Database path was not valid.";
+    case CMD_NEW_INIT_DB_FAILED:
+        return "Database initialization failed.";
+    case CMD_ADD_NO_DB:
+        return "No database to modify.";
+    case CMD_ADD_DB_UPDATE_FAIL:
+        return "Updating database entries failed.";
+    default:
+        return "Unrecognized error.";
+    }
+}

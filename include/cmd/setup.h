@@ -3,12 +3,14 @@
 struct Options;
 struct ConfigView;
 struct DbDriver;
+struct LoginCache;
 
 struct CmdRunEnvironment
 {
     const struct Options* options;
     struct ConfigView* config;
     struct DbDriver* db;
+    struct LoginCache* cache;
 };
 
 struct CmdRunEnvironment* cmd_run_env_init(const struct Options* options);

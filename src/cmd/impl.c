@@ -1,11 +1,15 @@
 #include "cmd/impl.h"
 #include "cmd/setup.h"
 
+#include "auth/auth.h"
+
 #include "common/constants.h"
 #include "common/error_msg.h"
+#include "common/macros.h"
 #include "common/paths.h"
 
 #include "db/driver.h"
+#include "db/entries/entry_manage.h"
 
 #include "logging/terminal_logger.h"
 
@@ -21,24 +25,49 @@
  * Fetch a new verified master password to a static buffer
  * @return view to the buffer
  */
-static struct StringView prompt_new_master_pw();
+static struct StringView cmd_prompt_new_master_pw();
 
-static bool db_path_verify(const char* path);
+/**
+ * Authenticates the user and reads the database's data
+ * @param env
+ * @return T/F
+ */
+static enum CmdStatus cmd_read_db(const struct CmdRunEnvironment* env);
+
+/**
+ * Adds a new entry to the database using the options and arguments user
+ * had provided.
+ * @param driver    - Driver with an authenticated and read database
+ * @param options
+ */
+static void cmd_add_entry_to_db(
+    struct DbDriver* driver, const struct Options* options);
+
+static const char* cmd_add_prompt_user(const char* entry_name);
+static const char* cmd_add_prompt_pw(const char* entry_name, bool echo_pw);
+
+/**
+ * Verifies that the path to the is a valid path (no strange chars) and that it
+ * exists.
+ * @param path - non-null path
+ * @return T/F
+ */
+static bool cmd_db_path_verify(const char* path);
 
 enum CmdStatus cmd_run_new(const struct CmdRunEnvironment* env)
 {
-    if (env->db)
+    if (db_drive_db_is_open(env->db))
     {
         // Close possible recent db
         db_drive_close_db(env->db);
     }
     const char* new_db_path = env->options->args[0];
 
-    if (!db_path_verify(new_db_path))
+    if (!cmd_db_path_verify(new_db_path))
     {
         return CMD_NEW_BAD_DB_PATH;
     }
-    const struct StringView master_pw = prompt_new_master_pw();
+    const struct StringView master_pw = cmd_prompt_new_master_pw();
 
     if (db_drive_new_db(env->db, new_db_path, master_pw))
     {
@@ -50,40 +79,57 @@ enum CmdStatus cmd_run_new(const struct CmdRunEnvironment* env)
 
 enum CmdStatus cmd_run_login(const struct CmdRunEnvironment* env)
 {
+    UNUSED(env);
     return CMD_OK;
 }
 
 enum CmdStatus cmd_run_add(const struct CmdRunEnvironment* env)
 {
+    if (!db_drive_db_is_open(env->db))
+    {
+        return CMD_ADD_NO_DB;
+    }
+
+    enum CmdStatus read_status = CMD_OK;
+    if ((read_status = cmd_read_db(env)) != CMD_OK)
+    {
+        return read_status;
+    }
+
+    cmd_add_entry_to_db(env->db, env->options);
+    if (db_drive_update_db_data(env->db))
+    {
+        return CMD_ADD_DB_UPDATE_FAIL;
+    }
+
     return CMD_OK;
 }
 
 enum CmdStatus cmd_run_get(const struct CmdRunEnvironment* env)
 {
+    UNUSED(env);
     return CMD_OK;
 }
 
 enum CmdStatus cmd_run_list(const struct CmdRunEnvironment* env)
 {
+    UNUSED(env);
     return CMD_OK;
 }
 
 enum CmdStatus cmd_run_del(const struct CmdRunEnvironment* env)
 {
+    UNUSED(env);
     return CMD_OK;
 }
 
 enum CmdStatus cmd_run_edit(const struct CmdRunEnvironment* env)
 {
+    UNUSED(env);
     return CMD_OK;
 }
 
-const char* cmd_get_error_msg(enum CmdStatus status)
-{
-    return "ERROR";
-}
-
-static bool db_path_verify(const char* path)
+static bool cmd_db_path_verify(const char* path)
 {
     if (!path_valid_path(path))
     {
@@ -98,7 +144,7 @@ static bool db_path_verify(const char* path)
     return true;
 }
 
-static struct StringView prompt_new_master_pw()
+static struct StringView cmd_prompt_new_master_pw()
 {
     static char verify_buffer[CST_MAX_MASTER_PW_LEN + 1] = "";
     struct StringView input = {
@@ -125,4 +171,87 @@ static struct StringView prompt_new_master_pw()
         }
     }
     return input;
+}
+
+static enum CmdStatus cmd_read_db(const struct CmdRunEnvironment* env)
+{
+    enum CmdStatus ret_status = CMD_OK;
+
+    struct MasterKey* const master_key =
+        auth_master_key_init(CST_MAX_MASTER_KEY_LEN);
+
+    if (auth_authenticate(master_key, env->db, env->cache))
+    {
+        ret_status = CMD_BAD_AUTH;
+        goto error;
+    }
+    if (db_drive_read_db_data(env->db, master_key))
+    {
+        ret_status = CMD_BAD_DB_READ;
+        goto error;
+    }
+    // TODO: Ownership of key?
+    // Our key is no longer needed, as driver copies the key
+    auth_master_key_clean(master_key);
+    return CMD_OK;
+
+error:
+    auth_master_key_clean(master_key);
+    return ret_status;
+}
+
+static const char* cmd_add_prompt_user(const char* entry_name)
+{
+    char* prompt_msg = prompt_fill_fmt(PROMPT_ADD_ENTRY_USERNAME_FMT, entry_name);
+
+    const char* const user_input = prompt_static_text(prompt_msg);
+    free(prompt_msg);
+    return user_input;
+}
+static const char* cmd_add_prompt_pw(const char* entry_name, const bool echo_pw)
+{
+    char* const prompt_msg =
+        prompt_fill_fmt(PROMPT_ADD_ENTRY_PASSWORD_FMT, entry_name);
+    const char* pw_input = NULL;
+
+    if (echo_pw)
+    {
+        pw_input = prompt_static_text(prompt_msg);
+    }
+    else
+    {
+        char* const verify_msg =
+            prompt_fill_fmt(PROMPT_ADD_VERIFY_ENTRY_PASSWORD_FMT, entry_name);
+        pw_input = prompt_static_password_twice(prompt_msg, verify_msg);
+        free(verify_msg);
+    }
+
+    free(prompt_msg);
+    return pw_input;
+}
+
+static void cmd_add_entry_to_db(
+    struct DbDriver* driver, const struct Options* options)
+{
+    const char* const entry_name = options->args[0];
+    const char* category_name = NULL;
+    bool echo_pw = false;
+
+    struct OptionHolder* find_result = options_find(options, OPT_CATEGORY);
+    if (find_result)
+    {
+        category_name = find_result->args[0];
+    }
+    find_result = options_find(options, OPT_ECHO);
+    if (find_result)
+    {
+        echo_pw = true;
+    }
+    struct Category* const category =
+        db_entries_find_category(driver->entries, category_name);
+    struct Entry* const new_entry = db_category_new_empty_entry(category);
+
+    new_entry->name = entry_name;
+    new_entry->user = cmd_add_prompt_user(new_entry->name);
+    new_entry->password = cmd_add_prompt_pw(new_entry->name, echo_pw);
 }

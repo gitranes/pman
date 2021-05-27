@@ -56,6 +56,7 @@ int cmd_build_run_env(struct CmdRunEnvironment* env)
         return -1;
     }
     try_to_open_db(env);
+    // TODO: Login cache
 
     return 0;
 }
