@@ -6,7 +6,7 @@
 #include "common/file.h"
 
 #include "encrypt/file/decrypt.h"
-#include "encrypt/raw/encrypt.h"
+#include "encrypt/raw/crypt.h"
 
 #include "hash/hash.h"
 

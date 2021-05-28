@@ -72,10 +72,9 @@ target_sources(
         encrypt/meta/crypt.c
         encrypt/meta/iv.c
         encrypt/meta/key.c
+        encrypt/raw/cipher.c
         encrypt/raw/crypt_block.c
         encrypt/raw/crypt.c
-        encrypt/raw/decrypt.c
-        encrypt/raw/encrypt.c
 
         hash/hash.c
         hash/hasher.c

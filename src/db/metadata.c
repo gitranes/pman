@@ -139,7 +139,7 @@ int db_meta_calculate_key(
 struct CryptMeta* db_meta_to_crypt_meta(
     const struct DbMetadata* meta, const struct MasterKey* master_key)
 {
-    // TODO: ugly cast
+    // TODO: ugly const_cast
     return enc_crypt_meta_init(
         meta->encrypt_algo,
         master_key->view,

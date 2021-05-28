@@ -6,7 +6,7 @@
 
 struct CryptMeta
 {
-    struct ByteView init_vector;
+    struct ByteView iv;
     struct ByteView key;
     enum EncryptAlgo algorithm;
 };
