@@ -66,6 +66,7 @@ target_sources(
         db/master_key.c
         db/metadata.c
 
+        encrypt/algorithm.c
         encrypt/file/decrypt.c
         encrypt/file/encrypt.c
         encrypt/meta/crypt.c

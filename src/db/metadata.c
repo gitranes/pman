@@ -30,7 +30,7 @@ enum FieldCount
 
 // See enum FieldSizes and DbMetadata for explanation.
 // SCNx64 = uint64_t from hexadecimal
-static const char* const META_SCANF_STRING =
+static const char* const METADATA_FMT_STR =
     "%" SCNx64 "%16s%16s%" SCNx64 "%" SCNx64 "%32s%" SCNx32;
 
 struct DbMetadata* db_meta_init()
@@ -77,7 +77,7 @@ int db_meta_read(struct DbMetadata* meta, FILE* fp_start)
 
     // TODO: Better alternatives?
     if (sscanf((const char*)meta_buffer,
-            META_SCANF_STRING,
+            METADATA_FMT_STR,
             &flags,
             meta->master_salt,
             meta->encrypt_iv,
@@ -90,6 +90,28 @@ int db_meta_read(struct DbMetadata* meta, FILE* fp_start)
         return -2;
     }
     return 0;
+}
+
+
+int db_meta_write(struct DbMetadata* meta, FILE* fp_start)
+{
+    // Build the flags
+    uint64_t flags = meta->version;
+    const uint64_t algo_swift = 31;
+    flags |= ((uint64_t)meta->encrypt_algo >> algo_swift);
+
+    const int bytes_written = fprintf(
+        fp_start,
+        METADATA_FMT_STR,
+        flags,
+        meta->master_salt,
+        meta->encrypt_iv,
+        meta->category_count,
+        meta->entry_count,
+        meta->integrity_hash,
+        meta->key_iteration_rounds);
+
+    return bytes_written > 0 ? 0 : -1;
 }
 
 int db_meta_calculate_key(
@@ -113,6 +135,7 @@ int db_meta_calculate_key(
     }
     return 0;
 }
+
 struct CryptMeta* db_meta_to_crypt_meta(
     const struct DbMetadata* meta, const struct MasterKey* master_key)
 {
