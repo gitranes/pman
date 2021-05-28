@@ -1,6 +1,5 @@
+#include "db/master_key.h"
 #include "db/metadata.h"
-
-#include "auth/auth.h"
 
 #include <openssl/evp.h>
 #include <openssl/rand.h>

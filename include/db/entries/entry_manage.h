@@ -3,6 +3,8 @@
 #include "db/entries/category.h"
 #include "db/entries/entry.h"
 
+#include "common/buffer_view.h"
+
 #include "logging/logger.h"
 
 #include <stddef.h>
@@ -22,10 +24,8 @@ struct DbEntries
 struct DbEntries* db_entries_init(size_t category_count);
 void db_entries_clean();
 
-int db_entries_read_db(struct DbEntries* entries, FILE* category_start);
-
-struct StringView db_entries_write_to_buffer(struct DbEntries* entries);
-int db_entries_write_to_file(struct DbEntries* entries, FILE* fp);
+int db_entries_from_raw(struct DbEntries* entries, struct ByteView raw);
+struct ByteView db_entries_as_raw(struct DbEntries* entries);
 
 /**
  * Searches for a category in a database based on a name

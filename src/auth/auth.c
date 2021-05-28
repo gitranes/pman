@@ -2,10 +2,7 @@
 
 #include "common/error_msg.h"
 
-#include "encrypt/meta/key.h"
-
 #include "db/driver.h"
-#include "db/metadata.h"
 
 #include "input/prompt_msgs.h"
 #include "input/prompt_static.h"
@@ -24,11 +21,9 @@ static struct StringView auth_get_master_pass(
     const char* db_path, struct LoginCache* cache);
 
 int auth_authenticate(
-    struct MasterKey* const empty_key,
-    struct DbDriver* const db_driver,
-    struct LoginCache* const cache)
+    struct DbDriver* const db_driver, struct LoginCache* const cache)
 {
-    assert(db_driver->fp && db_driver->metadata);
+    assert(db_drive_db_is_open(db_driver));
     const struct StringView master_pass =
         auth_get_master_pass(db_driver->db_path, cache);
 
@@ -37,33 +32,16 @@ int auth_authenticate(
         // Prompt or verification failed
         return -1;
     }
-    if (db_drive_verify_key(db_driver, empty_key, master_pass))
+    if (db_drive_unlock_db(db_driver, master_pass))
     {
         TLOG_ERROR(ERROR_AUTH_FMT, db_driver->db_path);
         return -2;
     }
 
-    empty_key->verified = true;
     return 0;
 }
 
-struct MasterKey* auth_master_key_init(size_t size)
-{
-    struct MasterKey* const key = malloc(sizeof(struct MasterKey));
-    key->view.buf = malloc(size);
-    key->view.size = size;
-    key->verified = false;
-
-    return key;
-}
-
-void auth_master_key_clean(struct MasterKey* const key)
-{
-    free(key->view.buf);
-    free(key);
-}
-
-struct StringView auth_get_master_pass(
+static struct StringView auth_get_master_pass(
     const char* db_path, struct LoginCache* cache)
 {
     struct StringView master_pass = {0};

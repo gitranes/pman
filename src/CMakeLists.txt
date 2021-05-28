@@ -1,10 +1,12 @@
+# Linting tools
 set(CMAKE_C_CLANG_TIDY "clang-tidy")
 set(CMAKE_C_INCLUDE_WHAT_YOU_USE "iwyu")
 set(CMAKE_LINK_WHAT_YOU_USE TRUE)
 
 add_executable(pman)
 
-# Inih
+# Inih library
+
 FetchContent_Declare(
         inih
         GIT_REPOSITORY https://github.com/benhoyt/inih
@@ -12,17 +14,21 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(inih)
 
-# Requires a bit more work as inih is not directly supported by FetchContent
-# TODO: hack hack hack... disabling clang-tidy this way
+# A bit hacky as inih is not directly supported by FetchContent or FindModule
+# TODO: disabling clang-tidy other way?
 set(CMAKE_C_CLANG_TIDY "")
+
 target_include_directories(pman SYSTEM PRIVATE ${inih_SOURCE_DIR})
 add_library(inih ${inih_SOURCE_DIR}/ini.c)
 set_target_properties(inih PROPERTIES COMPILE_FLAGS "")
-set(CMAKE_C_CLANG_TIDY "clang-tidy")
 
+set(CMAKE_C_CLANG_TIDY "clang-tidy")
 
 # OpenSSL
 find_package(OpenSSL REQUIRED)
+
+# pman
+
 target_link_libraries(pman OpenSSL::Crypto inih)
 
 # Address sanitization with debug builds
@@ -57,6 +63,7 @@ target_sources(
         db/entries/entry_manage.c
         db/entries/entry.c
         db/driver.c
+        db/master_key.c
         db/metadata.c
 
         encrypt/file/decrypt.c

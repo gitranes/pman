@@ -75,6 +75,14 @@ bool db_meta_new_db_values(struct DbMetadata* meta);
 int db_meta_read(struct DbMetadata* meta, FILE* fp_start);
 
 /**
+ * Attempts to write the metadata to a file.
+ * @param meta
+ * @param fp_start
+ * @return 0 on success and non-zero on failure
+ */
+int db_meta_write(struct DbMetadata* meta, FILE* fp_start);
+
+/**
  * Calculates the master key based on the metadata and the given master password.
  * @param meta
  * @param empty_key

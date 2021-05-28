@@ -8,9 +8,9 @@
 
 typedef struct ByteView CryptBlock;
 
-CryptBlock enc_init_encrypt_block(
+CryptBlock enc_encrypt_block_init(
     enum EncryptAlgo algorithm, size_t block_size);
-CryptBlock enc_init_decrypt_block(
+CryptBlock enc_decrypt_block_init(
     enum EncryptAlgo algorithm, size_t block_size);
 
-void enc_clean_block(CryptBlock block);
+void enc_crypt_block_clean(CryptBlock block);

@@ -10,6 +10,7 @@
 
 #include "db/driver.h"
 #include "db/entries/entry_manage.h"
+#include "db/master_key.h"
 #include "db/metadata.h"
 
 #include "logging/terminal_logger.h"
@@ -182,29 +183,15 @@ static enum CmdStatus cmd_read_db(const struct CmdRunEnvironment* env)
     {
         return CMD_NO_DB;
     }
-    enum CmdStatus ret_status = CMD_OK;
-
-    struct MasterKey* const master_key =
-        auth_master_key_init(DB_MASTER_KEY_SIZE);
-
-    if (auth_authenticate(master_key, env->db, env->cache))
+    if (auth_authenticate(env->db, env->cache))
     {
-        ret_status = CMD_BAD_AUTH;
-        goto error;
+        return CMD_BAD_AUTH;
     }
-    if (db_drive_read_db_data(env->db, master_key))
+    if (db_drive_read_db_data(env->db))
     {
-        ret_status = CMD_BAD_DB_READ;
-        goto error;
+        return CMD_BAD_DB_READ;
     }
-    // TODO: Ownership of key?
-    // Our key is no longer needed, as driver copies the key
-    auth_master_key_clean(master_key);
     return CMD_OK;
-
-error:
-    auth_master_key_clean(master_key);
-    return ret_status;
 }
 
 static const char* cmd_add_prompt_user(const char* entry_name)
