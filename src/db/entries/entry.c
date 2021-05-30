@@ -33,6 +33,15 @@ void db_entry_set_password(struct Entry* entry, const char* password)
     entry->password = strdup(password);
 }
 
+size_t db_entry_strlen(const struct Entry* entry)
+{
+    if (!entry->name || !entry->user || !entry->password)
+    {
+        return 0;
+    }
+    return strlen(entry->name) + strlen(entry->user) + strlen(entry->password);
+}
+
 void db_entry_print(const struct Entry* entry, const struct Logger* logger)
 {
     logger->interface.plain(logger,

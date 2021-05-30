@@ -5,10 +5,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-void db_category_init_in_place(void* buffer)
+struct Category* db_category_init_in_place(void* buffer, const char* name)
 {
     struct Category* const category = buffer;
-    memset(category, 0, sizeof(struct Category));
+    category->name = strdup(name);
+    return category;
 }
 
 void db_category_clean_in_place(struct Category* category)

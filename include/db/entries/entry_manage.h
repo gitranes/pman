@@ -25,7 +25,7 @@ struct DbEntries* db_entries_init(size_t category_count);
 void db_entries_clean();
 
 int db_entries_from_raw(struct DbEntries* entries, struct ByteView raw);
-struct ByteView db_entries_as_raw(struct DbEntries* entries);
+struct ByteView db_entries_as_raw(const struct DbEntries* entries);
 
 /**
  * Searches for a category in a database based on a name

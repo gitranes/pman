@@ -1,8 +1,6 @@
 #include "common/memory.h"
 
-#include <assert.h>
 #include <stdlib.h>
-#include <string.h>
 
 int mem_grow_buffer(void** buffer, size_t size, size_t new_size)
 {
@@ -10,13 +8,12 @@ int mem_grow_buffer(void** buffer, size_t size, size_t new_size)
     {
         return 0;
     }
-    void* const new_buffer = malloc(new_size);
+    void* const new_buffer = realloc(*buffer, new_size);
     if (!new_buffer)
     {
         return -1;
     }
 
-    memcpy(new_buffer, *buffer, size);
     *buffer = new_buffer;
     return 0;
 }

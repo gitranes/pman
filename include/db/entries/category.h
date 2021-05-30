@@ -4,8 +4,6 @@
 
 #include <stddef.h>
 
-extern const char* const CATEGORY_DEFAULT_NAME;
-
 struct EntryArray
 {
     struct Entry* buf;
@@ -18,7 +16,7 @@ struct Category
     struct EntryArray entries;
 };
 
-void db_category_init_in_place(void* buffer);
+struct Category* db_category_init_in_place(void* buffer, const char* name);
 void db_category_clean_in_place(struct Category* category);
 
 struct Entry* db_category_find_entry(
