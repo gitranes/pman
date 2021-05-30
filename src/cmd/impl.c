@@ -63,7 +63,7 @@ enum CmdStatus cmd_run_new(const struct CmdRunEnvironment* env)
         // Close possible recent db
         db_drive_close_db(env->db);
     }
-    const char* new_db_path = env->options->args[0];
+    const char* new_db_path = env->options->argv[0];
 
     if (!cmd_db_path_verify(new_db_path))
     {
@@ -109,7 +109,7 @@ enum CmdStatus cmd_run_get(const struct CmdRunEnvironment* env)
     {
         return read_status;
     }
-    const char* const entry_name = env->options->args[0];
+    const char* const entry_name = env->options->argv[0];
     struct Entry* const found_entry =
         db_entries_find_entry(env->db->entries, NULL, entry_name);
 
@@ -227,14 +227,14 @@ static const char* cmd_add_prompt_pw(const char* entry_name, const bool echo_pw)
 static void cmd_add_entry_to_db(
     struct DbDriver* driver, const struct Options* options)
 {
-    const char* const entry_name = options->args[0];
+    const char* const entry_name = options->argv[0];
     const char* category_name = NULL;
     bool echo_pw = false;
 
     struct OptionHolder* find_result = options_find(options, OPT_CATEGORY);
     if (find_result)
     {
-        category_name = find_result->args[0];
+        category_name = find_result->argv[0];
     }
     find_result = options_find(options, OPT_ECHO);
     if (find_result)

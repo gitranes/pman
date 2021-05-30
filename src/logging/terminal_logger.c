@@ -57,7 +57,7 @@ static void term_log_info(
     va_list args;
     va_start(args, fmt);
 
-    puts(INFO_PREFIX);
+    fputs(INFO_PREFIX, stdout);
     vprintf(fmt, args);
 
     va_end(args);
@@ -71,7 +71,7 @@ static void term_log_error(
     va_list args;
     va_start(args, fmt);
 
-    puts(ERROR_PREFIX);
+    fputs(ERROR_PREFIX, stdout);
     vprintf(fmt, args);
 
     va_end(args);

@@ -35,32 +35,32 @@ login timeout.
 Logs in to database that is then used with further commands. The login times
 out after a set period of time specified in the configuration.
 
-**`add `**`[--echo, -e][--db_path|-d path][--category|-c category] name`
+**`add `**`[--echo, -e][--db-path|-d path][--category|-c category] name`
 
 Adds a new entry to the current database. By default the password prompt does
 not echo, which can be modified with the `--echo` or `-e` option. The category
 and database path are optional. Aliases for the command are `insert` and
 `append`.
 
-**`get `**`[--clip|-x][--db_path|d path] name`
+**`get `**`[--clip|-x][--db-path|d path] name`
 
 Fetches a password matching a user in a database. By default utilizes the
 database that the user has logged in to. The same command is aliased with
 `fetch`.
 
-**`list `**`[--db_path|-d path]`
+**`list `**`[--db-path|-d path]`
 
 List the categories and entries in a database. By default uses the database
 that the user has logged on to, but optionally allows the user to select another
 database. The same command is aliased with `ls`.
 
-**`del `**`[--force|-f][--db_path|-d path] name`
+**`del `**`[--force|-f][--db-path|-d path] name`
 
 Removes an entry from a database. Every category in the database is searched.
 By default prompts before removing, which can be modified with the `--force`
 or `-f` option. Other aliases include `remove`, `delete` and `rm`.
 
-**`edit `**`[--db_path|-d path] name`
+**`edit `**`[--db-path|-d path] name`
 
 Modifies an entry in the database. Again, every category in the database is
 searched.

@@ -3,8 +3,6 @@
 enum CmdStatus
 {
     CMD_OK = 0,
-    CMD_INVALID,
-    CMD_SETUP_FAIL,
     CMD_NO_DB,
     CMD_BAD_AUTH,
     CMD_BAD_DB_READ,

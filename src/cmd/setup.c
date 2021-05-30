@@ -81,7 +81,7 @@ static int cmd_try_to_open_db(struct CmdRunEnvironment* env)
     struct OptionHolder* const path_opt =
         options_find(env->options, OPT_DB_PATH);
     if (path_opt
-        && !db_drive_open_db(env->db, path_opt->args[0]))
+        && !db_drive_open_db(env->db, path_opt->argv[0]))
     {
         return 0;
     }

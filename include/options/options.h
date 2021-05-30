@@ -16,7 +16,8 @@ enum OptionTag
 struct OptionHolder
 {
     enum OptionTag tag;
-    char** args;
+    int argc;
+    char** argv;
 };
 
 struct OptionHolderArray
@@ -29,7 +30,8 @@ struct Options
 {
     enum Command cmd;
     struct OptionHolderArray holders;
-    char** args;
+    int argc;
+    char** argv;
 };
 
 struct OptionHolder* options_find(

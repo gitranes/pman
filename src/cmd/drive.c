@@ -15,7 +15,7 @@
  */
 static enum CmdStatus run_command(const struct CmdRunEnvironment* env);
 
-enum CmdDriverStatus cmd_drive(const struct CmdRunEnvironment* env)
+int cmd_drive(const struct CmdRunEnvironment* env)
 {
     const struct Options* opt = env->options;
 
@@ -25,15 +25,11 @@ enum CmdDriverStatus cmd_drive(const struct CmdRunEnvironment* env)
     const enum CmdStatus status = run_command(env);
     if (!status)
     {
-        return CMD_DRV_OK;
+        return 0;
     }
 
-    TLOG_ERROR("%s", error_get_msg_for_cmd(status));
-    if (status == CMD_INVALID)
-    {
-        return CMD_DRV_NO_CMD;
-    }
-    return CMD_DRV_FAIL;
+    TLOG_ERROR("%s\n", error_get_msg_for_cmd(status));
+    return -1;
 }
 
 static enum CmdStatus run_command(const struct CmdRunEnvironment* env)
@@ -55,6 +51,6 @@ static enum CmdStatus run_command(const struct CmdRunEnvironment* env)
     case CMD_LIST:
         return cmd_run_list(env);
     default:
-        return CMD_INVALID;
+        assert(0);
     }
 }

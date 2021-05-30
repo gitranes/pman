@@ -5,7 +5,7 @@ if (WIN32)
 endif()
 if (UNIX)
     # The project uses a few POSIX and GNU extensions:
-    #   from POSIX: fileno, strdup
+    #   from POSIX: fileno, strdup, strtok_r
     #   from GNU: O_TMPFILE
     add_compile_definitions(_POSIX_C_SOURCE _GNU_SOURCE)
 endif()
