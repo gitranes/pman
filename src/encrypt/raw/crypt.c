@@ -53,6 +53,12 @@ static struct CryptSetup enc_setup_crypt(
     enum EncryptAlgo algorithm, size_t size)
 {
     struct CryptSetup setup = {0};
+    setup.type = enc_algo_cipher_type(algorithm);
+    if (!setup.type)
+    {
+        enc_crypt_block_clean(setup.block);
+        return (struct CryptSetup){0};
+    }
 
     setup.block = enc_crypt_block_init(algorithm, size);
     if (!setup.block.buf)
@@ -60,12 +66,7 @@ static struct CryptSetup enc_setup_crypt(
         return (struct CryptSetup){0};
     }
 
-    const EVP_CIPHER* type = enc_algo_cipher_type(algorithm);
-    if (!type)
-    {
-        enc_crypt_block_clean(setup.block);
-        return (struct CryptSetup){0};
-    }
+
     return setup;
 }
 

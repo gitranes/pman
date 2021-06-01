@@ -30,7 +30,7 @@ static int db_drive_write_encrypted(struct DbDriver* driver);
 static int db_drive_seek_to_meta_start(struct DbDriver* driver);
 static int db_drive_seek_to_data_start(struct DbDriver* driver);
 
-int db_drive_write_data(struct DbDriver* driver, const CryptBlock* encrypted);
+int db_drive_write_data(struct DbDriver* driver, CryptBlock encrypted);
 CryptBlock db_drive_encrypt_data(const struct DbDriver* driver);
 
 struct DbDriver* db_drive_init()
@@ -77,6 +77,10 @@ int db_drive_new_db(
         exit_code = -3;
         goto cleanup;
     }
+    // Take ownership of the key
+    driver->master_key = master_key;
+    driver->master_key->verified = true;
+
     if (db_drive_write_all(driver))
     {
         exit_code = -4;
@@ -223,7 +227,7 @@ int db_drive_write_encrypted(struct DbDriver* driver)
     {
         return -1;
     }
-    if (db_drive_write_data(driver, &encrypted))
+    if (db_drive_write_data(driver, encrypted))
     {
         enc_crypt_block_clean(encrypted);
         return -2;
@@ -250,16 +254,13 @@ CryptBlock db_drive_encrypt_data(const struct DbDriver* driver)
     return result;
 }
 
-int db_drive_write_data(struct DbDriver* driver, const CryptBlock* encrypted)
+int db_drive_write_data(struct DbDriver* driver, const CryptBlock encrypted)
 {
     if (db_drive_seek_to_data_start(driver))
     {
         return -1;
     }
-    if (fwrite((*encrypted).buf, 1, (*encrypted).size, driver->fp))
-    {
-        return -2;
-    }
+    fwrite(encrypted.buf, 1, encrypted.size, driver->fp);
     return 0;
 }
 

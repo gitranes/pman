@@ -31,11 +31,11 @@ find_package(OpenSSL REQUIRED)
 
 target_link_libraries(pman OpenSSL::Crypto inih)
 
-# Address sanitization with debug builds
+# Address sanitization with DebugAsan builds
 target_link_options(
         pman
         PRIVATE
-        "$<$<CONFIG:DEBUG>:-fsanitize=address,undefined>"
+        "$<$<CONFIG:DebugAsan>:-fsanitize=address,undefined>"
 )
 
 target_include_directories(pman PRIVATE ../include)
@@ -47,6 +47,7 @@ target_sources(
 
         auth/auth.c
 
+        cmd/cmd.c
         cmd/drive.c
         cmd/impl.c
         cmd/setup.c
@@ -55,6 +56,7 @@ target_sources(
         common/constants.c
         common/error_msg.c
         common/file.c
+        common/info_msg.c
         common/memory.c
         common/paths.c
         common/string.c

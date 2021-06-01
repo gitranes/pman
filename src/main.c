@@ -25,14 +25,14 @@ int main(int argc, char* argv[])
     if (cmd_build_run_env(env))
     {
         exit_code = EXIT_FAILURE;
-        TLOG_ERROR("%s\n", "Failed to configure running environment.\n");
+        TLOG_ERROR("%s\n", "Failed to configure running environment.");
         goto env_cleanup;
     }
 
     if (cmd_drive(env))
     {
         exit_code = EXIT_FAILURE;
-        TLOG_ERROR("%s\n", "Command execution failed\n");
+        TLOG_ERROR("%s\n", "Command execution failed.");
         goto env_cleanup;
     }
 

@@ -78,10 +78,9 @@ static bool cmd_read_config(struct ConfigView* const config)
 static int cmd_try_to_open_db(struct CmdRunEnvironment* env)
 {
     // db_path from an option is prioritized
-    struct OptionHolder* const path_opt =
+    const struct OptionHolder* const path_opt =
         options_find(env->options, OPT_DB_PATH);
-    if (path_opt
-        && !db_drive_open_db(env->db, path_opt->argv[0]))
+    if (path_opt && !db_drive_open_db(env->db, path_opt->arg))
     {
         return 0;
     }

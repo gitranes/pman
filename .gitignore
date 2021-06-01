@@ -65,6 +65,8 @@ CTestTestfile.cmake
 _deps
 build/
 cmake-build-debug/
+cmake-build-debugasan/
+cmake-build-release/
 DartConfiguration.tcl
 
 # Dia temp files

@@ -5,6 +5,7 @@
 
 #include "common/constants.h"
 #include "common/error_msg.h"
+#include "common/info_msg.h"
 #include "common/macros.h"
 #include "common/paths.h"
 
@@ -25,9 +26,10 @@
 
 /**
  * Fetch a new verified master password to a static buffer
+ * @param echo_p - Control the echoing of the input
  * @return view to the buffer
  */
-static struct StringView cmd_prompt_new_master_pw();
+static struct StringView cmd_prompt_new_master_pw(bool echo_p);
 
 /**
  * Authenticates the user and reads the database's data
@@ -63,19 +65,27 @@ enum CmdStatus cmd_run_new(const struct CmdRunEnvironment* env)
         // Close possible recent db
         db_drive_close_db(env->db);
     }
-    const char* new_db_path = env->options->argv[0];
+    const char* new_db_path = env->options->args[0];
 
     if (!cmd_db_path_verify(new_db_path))
     {
         return CMD_NEW_BAD_DB_PATH;
     }
-    const struct StringView master_pw = cmd_prompt_new_master_pw();
+    TLOG_INFO(INFO_NEW_CMD_BEGIN_FMT, new_db_path);
 
+    const bool echo_pw = options_find(env->options, OPT_ECHO);
+    const struct StringView master_pw = cmd_prompt_new_master_pw(echo_pw);
+
+    if (!master_pw.buf)
+    {
+        return CMD_NEW_PROMPT_FAIL;
+    }
     if (db_drive_new_db(env->db, new_db_path, master_pw))
     {
         return CMD_NEW_INIT_DB_FAILED;
     }
 
+    TLOG_INFO(INFO_NEW_CMD_SUCCESS_FMT, new_db_path);
     return CMD_OK;
 }
 
@@ -109,7 +119,7 @@ enum CmdStatus cmd_run_get(const struct CmdRunEnvironment* env)
     {
         return read_status;
     }
-    const char* const entry_name = env->options->argv[0];
+    const char* const entry_name = env->options->args[0];
     struct Entry* const found_entry =
         db_entries_find_entry(env->db->entries, NULL, entry_name);
 
@@ -117,7 +127,7 @@ enum CmdStatus cmd_run_get(const struct CmdRunEnvironment* env)
     {
         return CMD_GET_NOT_FOUND;
     }
-    struct OptionHolder* clip_opt = options_find(env->options, OPT_CLIP);
+    const struct OptionHolder* clip_opt = options_find(env->options, OPT_CLIP);
     if (clip_opt)
     {
         // TODO: Clipboard management
@@ -166,10 +176,23 @@ static bool cmd_db_path_verify(const char* path)
     return true;
 }
 
-static struct StringView cmd_prompt_new_master_pw()
+static struct StringView cmd_prompt_new_master_pw(const bool echo_pw)
 {
-    char* const master_pw = prompt_static_password_twice(
-        PROMPT_NEW_DB_MASTER_PW, PROMPT_NEW_DB_VERIFY_MASTER_PW);
+    char* master_pw = NULL;
+    if (echo_pw)
+    {
+        master_pw = prompt_static_text(PROMPT_NEW_DB_MASTER_PW);
+    }
+    else
+    {
+        master_pw = prompt_static_password_twice(
+            PROMPT_NEW_DB_MASTER_PW, PROMPT_NEW_DB_VERIFY_MASTER_PW);
+    }
+    if (!master_pw)
+    {
+        TLOG_ERROR("%s\n", "Could not disable terminal echo.");
+        return (struct StringView){0};
+    }
 
     return (struct StringView){
         .buf = master_pw,
@@ -227,14 +250,14 @@ static const char* cmd_add_prompt_pw(const char* entry_name, const bool echo_pw)
 static void cmd_add_entry_to_db(
     struct DbDriver* driver, const struct Options* options)
 {
-    const char* const entry_name = options->argv[0];
+    const char* const entry_name = options->args[0];
     const char* category_name = NULL;
     bool echo_pw = false;
 
-    struct OptionHolder* find_result = options_find(options, OPT_CATEGORY);
+    const struct OptionHolder* find_result = options_find(options, OPT_CATEGORY);
     if (find_result)
     {
-        category_name = find_result->argv[0];
+        category_name = find_result->arg;
     }
     find_result = options_find(options, OPT_ECHO);
     if (find_result)

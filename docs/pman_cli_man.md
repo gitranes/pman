@@ -24,11 +24,12 @@ To start use the **new** command to generate a database.
 
 ### Commands
 
-**`new `**`db_path`
+**`new `**`[--echo, -e] db_path`
 
 Creates a new database which passwords a stored. The command then prompts
 the user for the configuration of the database, such as master password,
-login timeout.
+login timeout. The `--echo` or `-e` option controls the echoing of the
+master password prompt.
 
 **`login `**`db_path`
 

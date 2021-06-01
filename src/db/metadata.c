@@ -97,8 +97,8 @@ int db_meta_write(struct DbMetadata* meta, FILE* fp_start)
 {
     // Build the flags
     uint64_t flags = meta->version;
-    const uint64_t algo_swift = 31;
-    flags |= ((uint64_t)meta->encrypt_algo >> algo_swift);
+    const uint64_t algo_shift = 31;
+    flags |= ((uint64_t)meta->encrypt_algo << algo_shift);
 
     const int bytes_written = fprintf(
         fp_start,

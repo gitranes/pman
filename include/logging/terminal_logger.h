@@ -11,4 +11,4 @@ extern const struct Logger TERMINAL_LOGGER;
 #define TLOG_INFO(fmt, ...) \
     TERMINAL_LOGGER.interface.info(&TERMINAL_LOGGER, fmt, __VA_ARGS__)
 #define TLOG_ERROR(fmt, ...) \
-    TERMINAL_LOGGER.interface.info(&TERMINAL_LOGGER, fmt, __VA_ARGS__)
+    TERMINAL_LOGGER.interface.error(&TERMINAL_LOGGER, fmt, __VA_ARGS__)

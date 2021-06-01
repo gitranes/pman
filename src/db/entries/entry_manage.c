@@ -150,7 +150,7 @@ static void db_entries_write_raw(
         {
             struct Entry* const entry = &category->entries.buf[j];
             written_bytes += snprintf(
-                (char*)raw->buf,
+                (char*)raw->buf + written_bytes,
                 raw->size,
                 "%s%s%s%s%s\n",
                 entry->name,
@@ -160,7 +160,10 @@ static void db_entries_write_raw(
                 entry->password);
         }
         written_bytes += snprintf(
-            (char*)(*raw).buf, (*raw).size, "%s\n", ENTRIES_CATEGORY_MARKER);
+            (char*)(*raw).buf + written_bytes,
+            (*raw).size,
+            "%s\n",
+            ENTRIES_CATEGORY_MARKER);
     }
 }
 

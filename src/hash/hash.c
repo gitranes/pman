@@ -29,7 +29,7 @@ static HashView hash_digest(const EVP_MD *type, const void* data, size_t size)
     {
         return HASH_ERROR;
     }
-    const size_t block_size = EVP_MD_block_size(type);
+    const size_t block_size = EVP_MD_size(type);
     HashView hashed = {
         .buf = malloc(block_size),
         .size = block_size
@@ -41,7 +41,7 @@ static HashView hash_digest(const EVP_MD *type, const void* data, size_t size)
         free(hashed.buf);
         return (HashView){0};
     }
-    assert(size == hashed.size);
+    assert(digest_size == hashed.size);
 
     EVP_MD_CTX_free(context);
     return hashed;
