@@ -12,7 +12,7 @@ struct DbEntries;
 
 struct DbDriver
 {
-    const char* db_path;
+    char* db_path;
     FILE* fp;
     struct DbMetadata* metadata;
     struct DbEntries* entries;

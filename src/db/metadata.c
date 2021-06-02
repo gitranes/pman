@@ -23,15 +23,22 @@ enum FieldEndOffsets
 
 const long DB_METADATA_HEADER_SIZE = DB_METADATA_SIZE;
 
-enum FieldCount
+enum MetaHelp
 {
-    DB_META_FIELD_COUNT = 8
+    DB_META_FIELD_COUNT = 7,
+    DB_META_FLAGS_SHIFT = 61
 };
 
 // See enum FieldSizes and DbMetadata for explanation.
 // SCNx64 = uint64_t from hexadecimal
-static const char* const METADATA_FMT_STR =
-    "%" SCNx64 "%16s%16s%" SCNx64 "%" SCNx64 "%32s%" SCNx32;
+static const char* const METADATA_SCANF_STR =
+    "%" SCNx64 "%16c%" SCNx64 "%16c%" SCNx64 "%32c%" SCNx32;
+
+static const char* const METADATA_PRINTF_STR =
+    "%" SCNx64 "%16s%" SCNx64 "%16s%" SCNx64 "%32s%" SCNx32;
+
+static uint64_t db_meta_to_flags(const struct DbMetadata* meta);
+static void db_meta_from_flags(struct DbMetadata* meta, uint64_t flags);
 
 struct DbMetadata* db_meta_init()
 {
@@ -72,41 +79,39 @@ int db_meta_read(struct DbMetadata* meta, FILE* fp_start)
     {
         return -1;
     }
-
     uint64_t flags = 0;
 
     // TODO: Better alternatives?
-    if (sscanf((const char*)meta_buffer,
-            METADATA_FMT_STR,
-            &flags,
-            meta->master_salt,
-            meta->encrypt_iv,
-            &meta->category_count,
-            &meta->entry_count,
-            meta->integrity_hash,
-            &meta->key_iteration_rounds)
-        != DB_META_FIELD_COUNT)
+    const int fields_assigned = sscanf(
+        (const char*)meta_buffer,
+        METADATA_SCANF_STR,
+        &flags,
+        meta->master_salt,
+        &meta->category_count,
+        meta->encrypt_iv,
+        &meta->entry_count,
+        meta->integrity_hash,
+        &meta->key_iteration_rounds);
+    if (fields_assigned != DB_META_FIELD_COUNT)
     {
         return -2;
     }
+    db_meta_from_flags(meta, flags);
     return 0;
 }
 
 
 int db_meta_write(struct DbMetadata* meta, FILE* fp_start)
 {
-    // Build the flags
-    uint64_t flags = meta->version;
-    const uint64_t algo_shift = 31;
-    flags |= ((uint64_t)meta->encrypt_algo << algo_shift);
+    const uint64_t flags = db_meta_to_flags(meta);
 
     const int bytes_written = fprintf(
         fp_start,
-        METADATA_FMT_STR,
+        METADATA_PRINTF_STR,
         flags,
         meta->master_salt,
-        meta->encrypt_iv,
         meta->category_count,
+        meta->encrypt_iv,
         meta->entry_count,
         meta->integrity_hash,
         meta->key_iteration_rounds);
@@ -119,8 +124,6 @@ int db_meta_calculate_key(
     struct MasterKey* empty_key,
     struct StringView master_pass)
 {
-    assert(empty_key->view.size == DB_MASTER_KEY_SIZE);
-
     if (PKCS5_PBKDF2_HMAC_SHA1(
             master_pass.buf,
             (int)master_pass.size,
@@ -148,4 +151,17 @@ struct CryptMeta* db_meta_to_crypt_meta(
             .size = DB_ENCRYPT_IV_SIZE
         }
     );
+}
+
+static uint64_t db_meta_to_flags(const struct DbMetadata* meta)
+{
+    uint64_t flags = meta->version;
+    flags |= ((uint64_t)meta->encrypt_algo << (uint64_t)DB_META_FLAGS_SHIFT);
+    return flags;
+}
+
+static void db_meta_from_flags(struct DbMetadata* meta, uint64_t flags)
+{
+    meta->encrypt_algo = (flags >> (uint64_t)DB_META_FLAGS_SHIFT);
+    meta->version = (int32_t)flags;
 }

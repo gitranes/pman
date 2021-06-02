@@ -28,7 +28,11 @@ struct TerminalHandle* term_handle_init()
 
 void term_handle_clean(struct TerminalHandle* term)
 {
-    term_echo_off(term);
+    if (!term)
+    {
+        return;
+    }
+    term_echo_on(term);
     free(term);
 }
 

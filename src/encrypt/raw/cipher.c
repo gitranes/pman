@@ -64,7 +64,6 @@ int enc_cipher_run(struct Cipher* cipher, const void* data, size_t size)
     {
         return -2;
     }
-
     cipher->block.size = out_bytes;
     return 0;
 }

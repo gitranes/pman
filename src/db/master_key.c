@@ -4,7 +4,7 @@
 
 enum KeySizes
 {
-    DB_MASTER_KEY_SIZE = 64
+    DB_MASTER_KEY_SIZE = 32
 };
 
 struct MasterKey* db_master_key_init()

@@ -51,6 +51,8 @@ void db_drive_clean(struct DbDriver* const driver)
     db_meta_clean(driver->metadata);
     db_entries_clean(driver->entries);
 
+    free(driver->master_key);
+    free(driver->db_path);
     free(driver->raw_data.buf);
     free(driver);
 }
@@ -89,6 +91,7 @@ int db_drive_new_db(
 
 cleanup:
     db_master_key_clean(master_key);
+    driver->master_key = NULL;
     db_drive_close_db(driver);
     return exit_code;
 }
@@ -102,8 +105,10 @@ int db_drive_open_db(struct DbDriver* driver, const char* db_path)
     }
     if (db_meta_read(driver->metadata, driver->fp))
     {
+        db_drive_close_db(driver);
         return -2;
     }
+    driver->db_path = strdup(db_path);
     return 0;
 }
 
@@ -152,7 +157,7 @@ int db_drive_read_db_data(struct DbDriver* driver)
     {
         return -2;
     }
-    if (db_drive_decrypt_data(driver))
+    if (!driver->raw_data.buf && db_drive_decrypt_data(driver))
     {
         return -3;
     }
@@ -245,7 +250,7 @@ CryptBlock db_drive_encrypt_data(const struct DbDriver* driver)
         db_meta_to_crypt_meta(driver->metadata, driver->master_key);
     if (!crypt_meta)
     {
-        return (CryptBlock) { 0 };
+        return (CryptBlock){0};
     }
     const CryptBlock result = enc_encrypt_raw(
         crypt_meta, driver->raw_data.buf, driver->raw_data.size);
@@ -267,7 +272,7 @@ int db_drive_write_data(struct DbDriver* driver, const CryptBlock encrypted)
 static int db_drive_decrypt_data(struct DbDriver* driver)
 {
     // Seek to the position of the data
-    if (fseek(driver->fp, DB_METADATA_HEADER_SIZE, SEEK_SET))
+    if (db_drive_seek_to_data_start(driver))
     {
         return -1;
     }
@@ -278,24 +283,27 @@ static int db_drive_decrypt_data(struct DbDriver* driver)
     FILE* tmp_fp = NULL;
     // TODO: Something other than temp file?
     // Here a temp file is just as an "endless" buffer
-    if (!(tmp_fp = file_hidden_temp(".", "w")))
+    if (!(tmp_fp = file_hidden_temp(".", "w+")))
     {
         ret_code = -2;
-        goto error;
+        goto crypt_cleanup;
     }
     if (fenc_decrypt_to_file(crypt_meta, driver->fp, tmp_fp))
     {
-        fclose(tmp_fp);
         ret_code = -3;
-        goto error;
+        goto tmp_cleanup;
     }
-    driver->raw_data = file_dump_contents(tmp_fp);
+    const struct ByteView dump = file_dump_contents(tmp_fp);
+    if (!dump.buf)
+    {
+        ret_code = -4;
+        goto tmp_cleanup;
+    }
+    driver->raw_data = dump;
 
-    enc_crypt_meta_clean(crypt_meta);
+tmp_cleanup:
     fclose(tmp_fp);
-    return 0;
-
-error:
+crypt_cleanup:
     enc_crypt_meta_clean(crypt_meta);
     return ret_code;
 }

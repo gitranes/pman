@@ -3,6 +3,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 
+#include <assert.h>
 #include <stdlib.h>
 
 FILE* file_hidden_temp(const char* directory_path, const char* mode)
@@ -41,6 +42,12 @@ struct ByteView file_dump_contents(FILE* fp)
 
     result.buf = malloc(dump_size + 1);
     result.size = dump_size;
-    fread(result.buf, 1, dump_size, fp);
+    size_t read_bytes = fread(result.buf, 1, dump_size, fp);
+
+    if (read_bytes != (size_t)dump_size)
+    {
+        free(result.buf);
+        return (struct ByteView){0};
+    }
     return result;
 }

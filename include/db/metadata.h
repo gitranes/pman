@@ -11,11 +11,6 @@
 
 struct MasterKey;
 
-enum KeySizes
-{
-    DB_MASTER_KEY_SIZE = 64
-};
-
 enum FieldSizes
 {
     DB_FLAGS_SIZE = 8,
@@ -43,13 +38,14 @@ enum NewDefaults
     DB_DEFAULT_KEY_ENCRYPT_ROUNDS = 10000
 };
 
+// Note: Avoid consecutive integer, as they are difficult to parse.
 struct DbMetadata
 {
     enum DbVersion version;
     enum EncryptAlgo encrypt_algo;
     unsigned char master_salt[DB_MASTER_SALT_SIZE + 1];
-    unsigned char encrypt_iv[DB_ENCRYPT_IV_SIZE + 1];
     uint64_t category_count;
+    unsigned char encrypt_iv[DB_ENCRYPT_IV_SIZE + 1];
     uint64_t entry_count;
     unsigned char integrity_hash[DB_INTEGRITY_HASH_SIZE + 1];
     int32_t key_iteration_rounds;

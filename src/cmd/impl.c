@@ -145,6 +145,7 @@ enum CmdStatus cmd_run_list(const struct CmdRunEnvironment* env)
     {
         return read_status;
     }
+    TLOG_INFO(INFO_LIST_START_FMT, env->db->db_path);
     db_entries_list(env->db->entries, &TERMINAL_LOGGER, LIST_SHOW_USER_PW);
     return CMD_OK;
 }

@@ -84,7 +84,7 @@ int db_entries_from_raw(struct DbEntries* entries, struct ByteView raw)
         // Choose a value that fits buffer and does not go over raw
         // Note: null byte
         const size_t max_slice =
-            MIN(sizeof(line_buffer) - 1, raw.size - read_bytes - 1);
+            MIN(sizeof(line_buffer) - 1, raw.size - read_bytes);
 
         if (db_entries_set_line(
                 line_buffer, &slice_size, line_start, max_slice))
@@ -249,10 +249,10 @@ static int db_entries_set_line(
     {
         return -1;
     }
-    *slice_size = line_end - line_start;
+    *slice_size = line_end - line_start + 1; // Note: include the line break
 
     memcpy(line_buffer, line_start, *slice_size);
-    line_buffer[*slice_size - 1] = '\0';
+    line_buffer[*slice_size - 1] = '\0'; // Override line break with null
 
     return 0;
 }
