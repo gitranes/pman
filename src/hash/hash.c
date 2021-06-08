@@ -24,7 +24,7 @@ HashView hash_bytes(const void* data, size_t size, enum HashAlgo algorithm)
 static HashView hash_digest(const EVP_MD *type, const void* data, size_t size)
 {
     EVP_MD_CTX* context = EVP_MD_CTX_new();
-    if (EVP_DigestInit_ex(context, type, NULL) != 1
+    if (EVP_DigestInit(context, type) != 1
         || EVP_DigestUpdate(context, data, size) != 1)
     {
         return HASH_ERROR;
@@ -36,7 +36,7 @@ static HashView hash_digest(const EVP_MD *type, const void* data, size_t size)
     };
 
     unsigned digest_size = 0;
-    if (EVP_DigestFinal_ex(context, hashed.buf, &digest_size) != 1)
+    if (EVP_DigestFinal(context, hashed.buf, &digest_size) != 1)
     {
         free(hashed.buf);
         return (HashView){0};
