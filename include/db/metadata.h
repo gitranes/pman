@@ -19,7 +19,7 @@ enum FieldSizes
     DB_CATEGORY_COUNT_SIZE = 8,
     DB_ENTRY_COUNT_SIZE = 8,
     DB_INTEGRITY_HASH_SIZE = 32,
-    DB_ITERATION_ROUNDS_SIZE = 4
+    DB_ITERATION_ROUNDS_SIZE = 8
 };
 
 extern const long DB_METADATA_HEADER_SIZE;
@@ -44,9 +44,9 @@ struct DbMetadata
     enum DbVersion version;
     enum EncryptAlgo encrypt_algo;
     unsigned char master_salt[DB_MASTER_SALT_SIZE + 1];
-    uint64_t category_count;
+    uint32_t category_count;
     unsigned char encrypt_iv[DB_ENCRYPT_IV_SIZE + 1];
-    uint64_t entry_count;
+    uint32_t entry_count;
     unsigned char integrity_hash[DB_INTEGRITY_HASH_SIZE + 1];
     int32_t key_iteration_rounds;
 };

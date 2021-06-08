@@ -17,7 +17,18 @@ static error_t parse_arg(
 // agrp string for --version
 const char* argp_program_version = "pman 0.1.0"; // NOLINT(cppcoreguidelines-avoid-non-const-global-variables, readability-identifier-naming)
 
-static const char* const DOC = "pman -- a command line password manager.";
+static const char* const DOC =
+    "pman -- a command line password manager.\
+    \vCommands:\n\
+  New database:     pman new db_path\n\
+  Login:            pman login db_path\n\
+  Add entries:      pman add name\n\
+  Fetch entries:    pman get name\n\
+  List entries:     pman list\n\
+  Delete entries:   pman del name\n\
+  Edit entries:     pman edit name\n\
+";
+
 static const char* const ARG_DOC = "COMMAND [ARGS...]";
 
 static const struct argp_option OPTIONS[] = {
@@ -79,7 +90,7 @@ static const struct argp ARGP = {
 int options_parse(
     struct ParseResult* result, int argc, char* argv[])
 {
-    return argp_parse(&ARGP, argc, argv, 0, 0, result);
+    return argp_parse(&ARGP, argc, argv, ARGP_NO_EXIT, 0, result);
 }
 
 static error_t parse_opt(int key, char* const arg, struct argp_state* state)

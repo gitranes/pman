@@ -57,7 +57,6 @@ target_sources(
         common/error_msg.c
         common/file.c
         common/info_msg.c
-        common/memory.c
         common/paths.c
         common/string.c
 

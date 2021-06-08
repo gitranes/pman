@@ -1,7 +1,5 @@
 #include "db/entries/category.h"
 
-#include "common/memory.h"
-
 #include <stdlib.h>
 #include <string.h>
 
@@ -19,6 +17,7 @@ void db_category_clean_in_place(struct Category* category)
     {
         db_entry_clean_in_place(&category->entries.buf[i]);
     }
+    free(category->entries.buf);
 }
 
 struct Entry* db_category_find_entry(
@@ -38,12 +37,15 @@ struct Entry* db_category_find_entry(
 struct Entry* db_category_new_empty_entry(struct Category* category)
 {
     const size_t old_size = category->entries.size;
-    if (mem_grow_buffer(
-        (void**)&category->entries.buf, old_size, old_size + 1))
+    const size_t new_block_size = (old_size + 1) * sizeof(struct Entry);
+
+    void* new_buffer = NULL;
+    if (!(new_buffer = realloc(category->entries.buf, new_block_size)))
     {
         return NULL;
     }
     category->entries.size += 1;
+    category->entries.buf = new_buffer;
 
     struct Entry* const new_entry = &category->entries.buf[old_size];
     db_entry_init_in_place(new_entry);

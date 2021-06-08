@@ -17,6 +17,7 @@ void enc_cipher_clean(struct Cipher* cipher)
 {
     EVP_CIPHER_CTX_free(cipher->ctx);
     enc_crypt_block_clean(cipher->block);
+    free(cipher);
 }
 
 int enc_cipher_prepare(
@@ -60,10 +61,13 @@ int enc_cipher_run(struct Cipher* cipher, const void* data, size_t size)
     {
         return -1;
     }
-    if (EVP_CipherFinal(cipher->ctx, cipher->block.buf, &out_bytes) != 1)
+    cipher->block.size = out_bytes;
+
+    if (EVP_CipherFinal(
+            cipher->ctx, cipher->block.buf + out_bytes, &out_bytes) != 1)
     {
         return -2;
     }
-    cipher->block.size = out_bytes;
+    cipher->block.size += out_bytes;
     return 0;
 }

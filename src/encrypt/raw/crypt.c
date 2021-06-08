@@ -66,7 +66,6 @@ static struct CryptSetup enc_setup_crypt(
         return (struct CryptSetup){0};
     }
 
-
     return setup;
 }
 
@@ -87,12 +86,19 @@ static int enc_decrypt(
     }
 
     int out_size = 0;
-    if ((EVP_DecryptUpdate(ctx, block->buf, &out_size, data, (int)size) != 1)
-        || EVP_DecryptFinal(ctx, block->buf, &out_size) != 1)
+    if (EVP_DecryptUpdate(ctx, block->buf, &out_size, data, (int)size) != 1)
     {
         return -3;
     }
     block->size = out_size;
+
+    if (EVP_DecryptFinal(ctx, block->buf + out_size, &out_size) != 1)
+    {
+        return -4;
+    }
+    block->size += out_size;
+
+    EVP_CIPHER_CTX_free(ctx);
     return 0;
 }
 
@@ -113,11 +119,18 @@ static int enc_encrypt(
     }
 
     int out_size = 0;
-    if ((EVP_EncryptUpdate(ctx, block->buf, &out_size, data, (int)size) != 1)
-        || EVP_EncryptFinal(ctx, block->buf, &out_size) != 1)
+    if (EVP_EncryptUpdate(ctx, block->buf, &out_size, data, (int)size) != 1)
     {
         return -3;
     }
     block->size = out_size;
+
+    if (EVP_EncryptFinal(ctx, block->buf + out_size, &out_size) != 1)
+    {
+        return -4;
+    }
+    block->size += out_size;
+
+    EVP_CIPHER_CTX_free(ctx);
     return 0;
 }

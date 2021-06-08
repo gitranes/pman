@@ -40,7 +40,7 @@ struct ByteView file_dump_contents(FILE* fp)
     struct ByteView result = {0};
     const long dump_size = file_size(fp);
 
-    result.buf = malloc(dump_size + 1);
+    result.buf = malloc(dump_size);
     result.size = dump_size;
     size_t read_bytes = fread(result.buf, 1, dump_size, fp);
 

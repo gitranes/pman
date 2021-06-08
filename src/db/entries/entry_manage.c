@@ -80,6 +80,10 @@ int db_entries_from_raw(struct DbEntries* entries, struct ByteView raw)
          read_bytes += slice_size)
     {
         unsigned char* const line_start = raw.buf + read_bytes;
+        if (*line_start == '\0')
+        {
+            break;
+        }
 
         // Choose a value that fits buffer and does not go over raw
         // Note: null byte
@@ -99,8 +103,11 @@ int db_entries_from_raw(struct DbEntries* entries, struct ByteView raw)
 struct ByteView db_entries_as_raw(const struct DbEntries* entries)
 {
     const size_t raw_size = db_entries_raw_size(entries);
+
+    // Note: sprintf needs space for null byte, even though it is not necessary
+    // as we are storing the size.
     struct ByteView raw = {
-        .buf = malloc(raw_size),
+        .buf = calloc(1, raw_size + 1),
         .size = raw_size
     };
 
@@ -121,8 +128,8 @@ static size_t db_entries_raw_size(const struct DbEntries* entries)
     for (size_t i = 0; i < entries->categories.size; ++i)
     {
         struct Category* const category = &entries->categories.buf[0];
-        // ENTRY_END amount of separators per entry
-        raw_size += ENTRY_END * (separator_size * category->entries.size);
+        // ENTRY_END - 1 amount of separators per entry
+        raw_size += (ENTRY_END - 1) * (separator_size * category->entries.size);
 
         for (size_t j = 0; j < category->entries.size; ++j)
         {
@@ -130,6 +137,7 @@ static size_t db_entries_raw_size(const struct DbEntries* entries)
             raw_size += db_entry_strlen(&category->entries.buf[j]) + 1;
         }
     }
+
     return raw_size;
 }
 

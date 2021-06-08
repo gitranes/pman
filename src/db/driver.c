@@ -15,6 +15,16 @@
 #include <stdlib.h>
 #include <string.h>
 
+inline static void db_drive_swap_raw_data(
+    struct DbDriver* driver, struct ByteView new_data)
+{
+    if (driver->raw_data.buf)
+    {
+        free(driver->raw_data.buf);
+    }
+    driver->raw_data = new_data;
+}
+
 static int db_drive_decrypt_data(struct DbDriver* driver);
 
 static bool db_drive_verify_integrity_hash(const struct DbDriver* driver);
@@ -35,11 +45,9 @@ CryptBlock db_drive_encrypt_data(const struct DbDriver* driver);
 
 struct DbDriver* db_drive_init()
 {
-    struct DbDriver* const driver = malloc(sizeof(*driver));
-    driver->fp = NULL;
+    struct DbDriver* const driver = calloc(1, sizeof(*driver));
     driver->metadata = db_meta_init();
     driver->entries = db_entries_init(1);
-    driver->raw_data = (struct ByteView){ 0 };
 
     return driver;
 }
@@ -50,8 +58,11 @@ void db_drive_clean(struct DbDriver* const driver)
 
     db_meta_clean(driver->metadata);
     db_entries_clean(driver->entries);
+    if (driver->master_key)
+    {
+        db_master_key_clean(driver->master_key);
+    }
 
-    free(driver->master_key);
     free(driver->db_path);
     free(driver->raw_data.buf);
     free(driver);
@@ -178,7 +189,7 @@ int db_drive_update_db_data(struct DbDriver* driver)
     {
         return -2;
     }
-    if (freopen(NULL, "w", driver->fp))
+    if (!freopen(NULL, "w", driver->fp))
     {
         return -3;
     }
@@ -192,11 +203,13 @@ int db_drive_update_db_data(struct DbDriver* driver)
 
 static int db_drive_write_all(struct DbDriver* driver)
 {
-    driver->raw_data = db_entries_as_raw(driver->entries);
-    if (!driver->raw_data.buf)
+    struct ByteView raw_entries = db_entries_as_raw(driver->entries);
+    if (!raw_entries.buf)
     {
         return -1;
     }
+    db_drive_swap_raw_data(driver, raw_entries);
+
     if (db_drive_write_metadata(driver))
     {
         return -2;
@@ -250,7 +263,7 @@ CryptBlock db_drive_encrypt_data(const struct DbDriver* driver)
         db_meta_to_crypt_meta(driver->metadata, driver->master_key);
     if (!crypt_meta)
     {
-        return (CryptBlock){0};
+        return (CryptBlock) { 0 };
     }
     const CryptBlock result = enc_encrypt_raw(
         crypt_meta, driver->raw_data.buf, driver->raw_data.size);

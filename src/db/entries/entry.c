@@ -45,5 +45,5 @@ size_t db_entry_strlen(const struct Entry* entry)
 void db_entry_print(const struct Entry* entry, const struct Logger* logger)
 {
     logger->interface.plain(logger,
-        "Entry '%s': %s:%s", entry->name, entry->user, entry->password);
+        "Entry '%s': %s:%s\n", entry->name, entry->user, entry->password);
 }

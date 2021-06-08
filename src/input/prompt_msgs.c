@@ -23,7 +23,7 @@ const char* const PROMPT_ADD_VERIFY_ENTRY_PASSWORD_FMT =
 char* prompt_fill_fmt(const char* fmt, const char* arg)
 {
     const size_t result_str_size = strlen(fmt) + strlen(arg) + 1; // null byte
-    char* const result_str = malloc(result_str_size);
+    char* const result_str = calloc(1, result_str_size);
 
     snprintf(result_str, result_str_size, fmt, arg);
     return result_str;

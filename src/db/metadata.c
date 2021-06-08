@@ -1,10 +1,8 @@
 #include "db/master_key.h"
 #include "db/metadata.h"
 
-#include <openssl/evp.h>
 #include <openssl/rand.h>
 
-#include <assert.h>
 #include <inttypes.h>
 #include <stdlib.h>
 
@@ -26,16 +24,17 @@ const long DB_METADATA_HEADER_SIZE = DB_METADATA_SIZE;
 enum MetaHelp
 {
     DB_META_FIELD_COUNT = 7,
-    DB_META_FLAGS_SHIFT = 61
+    DB_META_FLAGS_SHIFT = 31
 };
 
 // See enum FieldSizes and DbMetadata for explanation.
 // SCNx64 = uint64_t from hexadecimal
 static const char* const METADATA_SCANF_STR =
-    "%" SCNx64 "%16c%" SCNx64 "%16c%" SCNx64 "%32c%" SCNx32;
+    "%8" SCNx32 "%16c%8" SCNx32 "%16c%8" SCNx32 "%32c%8" SCNx32;
 
+// Print numbers with full 0 padding (byte sizes stay fixed)
 static const char* const METADATA_PRINTF_STR =
-    "%" SCNx64 "%16s%" SCNx64 "%16s%" SCNx64 "%32s%" SCNx32;
+    "%08" SCNx32 "%.16s%08" SCNx32 "%.16s%08" SCNx32 "%.32s%08" SCNx32;
 
 static uint64_t db_meta_to_flags(const struct DbMetadata* meta);
 static void db_meta_from_flags(struct DbMetadata* meta, uint64_t flags);
@@ -63,7 +62,7 @@ bool db_meta_new_db_values(struct DbMetadata* const meta)
     meta->entry_count = 0;
 
     if (RAND_bytes(meta->master_salt, DB_MASTER_SALT_SIZE) != 1
-        || RAND_bytes(meta->encrypt_iv, DB_MASTER_SALT_SIZE) != 1)
+        || RAND_bytes(meta->encrypt_iv, DB_ENCRYPT_IV_SIZE) != 1)
     {
         return false;
     }
@@ -79,7 +78,7 @@ int db_meta_read(struct DbMetadata* meta, FILE* fp_start)
     {
         return -1;
     }
-    uint64_t flags = 0;
+    uint32_t flags = 0;
 
     // TODO: Better alternatives?
     const int fields_assigned = sscanf(
@@ -103,7 +102,7 @@ int db_meta_read(struct DbMetadata* meta, FILE* fp_start)
 
 int db_meta_write(struct DbMetadata* meta, FILE* fp_start)
 {
-    const uint64_t flags = db_meta_to_flags(meta);
+    const uint32_t flags = db_meta_to_flags(meta);
 
     const int bytes_written = fprintf(
         fp_start,
