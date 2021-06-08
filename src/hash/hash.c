@@ -6,7 +6,7 @@
 
 static HashView hash_digest(const EVP_MD *type, const void* data, size_t size);
 
-const static HashView HASH_ERROR = {0};
+static const HashView HASH_ERROR = {0};
 
 HashView hash_bytes(const void* data, size_t size, enum HashAlgo algorithm)
 {

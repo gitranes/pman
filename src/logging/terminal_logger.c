@@ -17,7 +17,7 @@ static const char* const INFO_PREFIX = "[INFO]: ";
 static const char* const ERROR_PREFIX = "[ERROR]: ";
 
 const struct Logger TERMINAL_LOGGER = {
-    .interface = (struct LoggerInterface) {
+    .interface = {
         .init = term_log_init,
         .close = term_log_close,
         .plain = term_log_plain,

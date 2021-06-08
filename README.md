@@ -13,7 +13,7 @@ A command line password manager.
     - [Improvements](#improvements)
   - [Building](#building)
     - [Dependencies](#dependencies)
-    - [How to](#how-to)
+    - [Build steps](#build-steps)
 
 ### Introduction
 
@@ -101,24 +101,24 @@ and functional tests will be developed in the future.
 ### Implemented / Not implemented
 
 * Implemented commands:
-  * 'new' - The user is able create an encrypted database.
-  * 'get' - The user is able to fetch entries from the database.
-  * 'add' - The user is able to add entries to the database.
-  * 'list' - The user can list all entries of the database.
+  * `new` - The user is able create an encrypted database.
+  * `get` - The user is able to fetch entries from the database.
+  * `add` - The user is able to add entries to the database.
+  * `list` - The user can list all entries of the database.
 * Not implemented commands:
-  * 'login' - Login caching is a nice-to-have feature, which needs to
+  * `login` - Login caching is a nice-to-have feature, which needs to
   * implemented securely.
-  * 'del' - The internal data structures would need reworking to better
+  * `del` - The internal data structures would need reworking to better
   * support deleting.
-  * 'edit' - Interactive editing is again a nice-to-have feature.
+  * `edit` - Interactive editing is again a nice-to-have feature.
 
 * Implemented options:
-  * '--echo|-e' - The user can control the echoing of the prompts.
-  * '--db-path|-d path' - The user can specify a database from the command-line.
+  * `--echo|-e` - The user can control the echoing of the prompts.
+  * `--db-path|-d path` - The user can specify a database from the command-line.
 * Not implemented options:
-  * '--category|-c' - Currently the database only supports a single category.
-  * '--clip|-x' - Clipboard integration is not trivial, and requires focus
-  * from a security POV (password cannot remain in the clipboard).
+  * `--category|-c` - Currently the database only supports a single category.
+  * `--clip|-x` - Clipboard integration is not trivial, and requires focus
+    from a security POV (password cannot remain in the clipboard).
 ### Improvements
 
 * Implement the missing commands / options
@@ -131,17 +131,36 @@ and functional tests will be developed in the future.
 ### Dependencies
 
 * Libraries
-  * OpenSSL - User for encrypting and hashing.
+  * OpenSSL - User for encrypting, decrypting and hashing.
   * argp    - Used for command-line parsing.
   * inih    - Used for parsing the configuration file.
   * A few POSIX and GNU extensions (`O_TMPFILE, strdup, and strtok_r etc.`)
 * Build tools
   * CMake
   * C11 supporting compiler (preferably clang)
-  * clang-tidy - Linting
-  * iwyu       - Include what you use (build linting tool)
-  * lwyu       - Link what you use (build linting tool)
+  * clang-tidy - For linting and static analysis
+  * iwyu       - Include what you use (linting tool)
+  * lwyu       - Link what you use (linting tool)
 
-### How to
+### Build steps
 
-TODO
+Building should be rather simple, as all of the dependencies are handled in the
+CMake files. Only the build dependencies are required to be installed.
+
+The repository supports building in CLion and Visual Studio Code IDEs, but
+building from the command line is probably the easiest way. Personally I
+recommend doing an out-of-source build:
+
+    # In root of pman project, first configure CMake
+    mkdir build_debug/
+    cmake -Bbuild_debug -DCMAKE_BUILD_TYPE=Debug .
+
+    # 'Release' and 'DebugAsan' build are also supported.
+
+    # Then build
+    cd build_debug/
+    make -j
+
+    # Run after a successful build
+    cd src/
+    pman --help
