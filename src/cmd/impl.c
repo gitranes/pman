@@ -109,6 +109,8 @@ enum CmdStatus cmd_run_add(const struct CmdRunEnvironment* env)
         return CMD_ADD_DB_UPDATE_FAIL;
     }
 
+    const char* const entry_name = env->options->args[0];
+    TLOG_INFO(INFO_ADD_ADDED_ENTRY_FMT, entry_name, env->db->db_path);
     return CMD_OK;
 }
 
@@ -127,6 +129,8 @@ enum CmdStatus cmd_run_get(const struct CmdRunEnvironment* env)
     {
         return CMD_GET_NOT_FOUND;
     }
+    TLOG_INFO(INFO_GET_FOUND_ENTRY_FMT, entry_name, env->db->db_path);
+
     const struct OptionHolder* clip_opt = options_find(env->options, OPT_CLIP);
     if (clip_opt)
     {
@@ -272,4 +276,6 @@ static void cmd_add_entry_to_db(
     db_entry_set_name(new_entry, entry_name);
     db_entry_set_user(new_entry, cmd_add_prompt_user(new_entry->name));
     db_entry_set_password(new_entry, cmd_add_prompt_pw(new_entry->name, echo_pw));
+
+    TLOG_INFO(INFO_ADD_CREATED_ENTRY_FMT, entry_name);
 }
